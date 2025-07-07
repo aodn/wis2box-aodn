@@ -1,0 +1,15 @@
+[project]
+name = "wis2box-aodn"
+version = "0.1.0"
+description = "A WMO WIS 2.0 implementation for the Australian Ocean Data Network (AODN) using wis2box for ocean data management."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "minio>=7.2.15",
+    "pandas>=2.3.0",
+    "pip>=25.1.1",
+    "pre-commit>=4.2.0",
+    "python-dotenv>=1.1.0",
+    "xarray[complete]>=2025.6.1",
+]
