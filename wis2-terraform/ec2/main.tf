@@ -1,11 +1,11 @@
 # This Terraform configuration creates an EC2 instance for WIS2BOX applications.
 resource "aws_instance" "wis2box_apps" {
-  ami                    = "ami-010876b9ddd38475e"
+  ami                    = "ami-010876b9ddd38475e" 
   instance_type          = "t3.medium"
   subnet_id              = "subnet-02b17a3e5362f9549" #  poc-imos-wis-public-subnet-2a
   vpc_security_group_ids = ["sg-02095093bced267c7"]  # poc-imos-wis2-SG
-  associate_public_ip_address = true
-  key_name               = "leoli"
+  associate_public_ip_address = true 
+  key_name               = "wis2"
 
   user_data = <<-EOF
               #!/bin/bash
@@ -23,30 +23,12 @@ resource "aws_instance" "wis2box_apps" {
               apt-get update -y
               apt-get install -y docker-ce docker-compose-plugin unzip python3-pip python3.12-venv
 
-              # Setup Python virtual environment in /opt/wis2box (or another non-root user's home if desired)
-              # TODO remove this code as WIS2BOX version 1.0 does not need virtual env
-              # cd /opt
-              # python3 -m venv wis2box
-              # source wis2box/bin/activate
-              # pip install --upgrade pip
-              # pip install --upgrade pyopenssl
-              # pip install urllib3==1.26.0
-
               # Add 'ubuntu' user to docker group (if on Ubuntu AMI)
               usermod -aG docker ubuntu
 
               # Install EFS Client
               apt-get update
-              apt-get -y install git binutils rustc cargo pkg-config libssl-dev gettext
-
-              # Check network connectivity
-              curl -I https://github.com || { echo "Network error: Cannot reach GitHub"; exit 1; }
-
-              cd /opt
-              git clone https://github.com/aws/efs-utils || { echo "git clone failed"; exit 1; }
-              cd efs-utils
-              ./build-deb.sh || { echo "efs-utils build failed"; exit 1; }
-              apt-get -y install ./build/amazon-efs-utils*deb || { echo "efs-utils install failed"; exit 1; }
+              apt-get -y install nfs-common
 
               # Create mount point for EFS
               mkdir -p /mnt/efs-mount-point
