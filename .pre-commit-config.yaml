@@ -8,4 +8,4 @@ repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.88.0
     hooks:
-      - id: terragrunt_fmt
+      - id: terraform_fmt
