@@ -1,0 +1,542 @@
+{
+    "conformsTo": "csv2bufr-template-v2.json",
+    "metadata": {
+        "label": "",
+        "description": "",
+        "version": "0",
+        "author": "",
+        "editor": "",
+        "dateCreated": "2025-07-01",
+        "dateModified": "2025-07-01",
+        "id": "98b152f6-6456-4333-b298-d3fca7f52e38"
+    },
+    "inputDelayedDescriptorReplicationFactor": [],
+    "inputShortDelayedDescriptorReplicationFactor": [],
+    "inputExtendedDelayedDescriptorReplicationFactor": [],
+    "number_header_rows": 1,
+    "column_names_row": 1,
+    "delimiter": ",",
+    "quoting": "QUOTE_NONE",
+    "quotechar": "'",
+    "wigos_station_identifier": "data:wigos_station_identifier",
+    "header": [
+        {
+            "eccodes_key": "edition",
+            "value": "const:4"
+        },
+        {
+            "eccodes_key": "masterTableNumber",
+            "value": "const:0"
+        },
+        {
+            "eccodes_key": "bufrHeaderCentre",
+            "value": ""
+        },
+        {
+            "eccodes_key": "dataCategory",
+            "value": "const:0"
+        },
+        {
+            "eccodes_key": "internationalDataSubCategory",
+            "value": "const:6"
+        },
+        {
+            "eccodes_key": "masterTablesVersionNumber",
+            "value": "const:41"
+        },
+        {
+            "eccodes_key": "typicalYear",
+            "value": "data:year"
+        },
+        {
+            "eccodes_key": "typicalMonth",
+            "value": "data:month"
+        },
+        {
+            "eccodes_key": "typicalDay",
+            "value": "data:day"
+        },
+        {
+            "eccodes_key": "typicalHour",
+            "value": "data:hour"
+        },
+        {
+            "eccodes_key": "typicalMinute",
+            "value": "data:minute"
+        },
+        {
+            "eccodes_key": "typicalSecond",
+            "value": "const:0"
+        },
+        {
+            "eccodes_key": "numberOfSubsets",
+            "value": "const:1"
+        },
+        {
+            "eccodes_key": "observedData",
+            "value": "const:1"
+        },
+        {
+            "eccodes_key": "compressedData",
+            "value": "const:0"
+        },
+        {
+            "eccodes_key": "unexpandedDescriptors",
+            "value": "array:308015"
+        }
+    ],
+    "data": [
+        {
+            "eccodes_key": "#1#regionNumber",
+            "value": "data:regionNumber",
+            "valid_min": "const:0",
+            "valid_max": "const:7",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#wmoRegionSubArea",
+            "value": "data:wmoRegionSubArea",
+            "valid_min": "const:0",
+            "valid_max": "const:15",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#buoyOrPlatformIdentifier",
+            "value": "data:buoyOrPlatformIdentifier",
+            "valid_min": "const:0",
+            "valid_max": "const:131071",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#shipOrMobileLandStationIdentifier",
+            "value": "data:shipOrMobileLandStationIdentifier"
+        },
+        {
+            "eccodes_key": "#1#satelliteIdentifier",
+            "value": "data:satelliteIdentifier",
+            "valid_min": "const:0",
+            "valid_max": "const:1023",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#blockNumber",
+            "value": "data:blockNumber",
+            "valid_min": "const:0",
+            "valid_max": "const:127",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#stationNumber",
+            "value": "data:stationNumber",
+            "valid_min": "const:0",
+            "valid_max": "const:1023",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#indicatorForMethodOfCalculatingSpectralWaveData",
+            "value": "data:indicatorForMethodOfCalculatingSpectralWaveData",
+            "valid_min": "const:0",
+            "valid_max": "const:15",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#platformType",
+            "value": "data:platformType",
+            "valid_min": "const:0",
+            "valid_max": "const:15",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#year",
+            "value": "data:year",
+            "valid_min": "const:0",
+            "valid_max": "const:4095",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#month",
+            "value": "data:month",
+            "valid_min": "const:0",
+            "valid_max": "const:15",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#day",
+            "value": "data:day",
+            "valid_min": "const:0",
+            "valid_max": "const:63",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#hour",
+            "value": "data:hour",
+            "valid_min": "const:0",
+            "valid_max": "const:31",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#minute",
+            "value": "data:minute",
+            "valid_min": "const:0",
+            "valid_max": "const:63",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#latitude",
+            "value": "data:latitude",
+            "valid_min": "const:-90.0",
+            "valid_max": "const:245.54431",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#longitude",
+            "value": "data:longitude",
+            "valid_min": "const:-180.0",
+            "valid_max": "const:491.08863",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#totalWaterDepth",
+            "value": "data:totalWaterDepth",
+            "valid_min": "const:0",
+            "valid_max": "const:16383",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#directionFromWhichDominantWavesAreComing",
+            "value": "data:directionFromWhichDominantWavesAreComing",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#directionalSpreadOfDominantWave",
+            "value": "data:directionalSpreadOfDominantWave",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#totalNumberOfWaveBands",
+            "value": "data:totalNumberOfWaveBands",
+            "valid_min": "const:0",
+            "valid_max": "const:127",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#waveSamplingIntervalTime",
+            "value": "data:waveSamplingIntervalTime",
+            "valid_min": "const:0.0",
+            "valid_max": "const:3.2767",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#durationOfWaveRecord",
+            "value": "data:durationOfWaveRecord",
+            "valid_min": "const:0",
+            "valid_max": "const:4095",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#waveMeasurementInstrumentation",
+            "value": "data:waveMeasurementInstrumentation",
+            "valid_min": "const:0",
+            "valid_max": "const:15",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#significantWaveHeight",
+            "value": "data:significantWaveHeight",
+            "valid_min": "const:0.0",
+            "valid_max": "const:81.91",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#spectralPeakWavePeriod",
+            "value": "data:spectralPeakWavePeriod",
+            "valid_min": "const:0.0",
+            "valid_max": "const:51.1",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#maximumWaveHeight",
+            "value": "data:maximumWaveHeight",
+            "valid_min": "const:0.0",
+            "valid_max": "const:81.91",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#averageWavePeriod",
+            "value": "data:averageWavePeriod",
+            "valid_min": "const:0.0",
+            "valid_max": "const:51.1",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#waveMeasurementInstrumentation",
+            "value": "data:waveMeasurementInstrumentation",
+            "valid_min": "const:0",
+            "valid_max": "const:15",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#significantWaveHeight",
+            "value": "data:significantWaveHeight",
+            "valid_min": "const:0.0",
+            "valid_max": "const:81.91",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#spectralPeakWavePeriod",
+            "value": "data:spectralPeakWavePeriod",
+            "valid_min": "const:0.0",
+            "valid_max": "const:51.1",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#maximumWaveHeight",
+            "value": "data:maximumWaveHeight",
+            "valid_min": "const:0.0",
+            "valid_max": "const:81.91",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#averageWavePeriod",
+            "value": "data:averageWavePeriod",
+            "valid_min": "const:0.0",
+            "valid_max": "const:51.1",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#delayedDescriptorReplicationFactor",
+            "value": "data:delayedDescriptorReplicationFactor",
+            "valid_min": "const:0",
+            "valid_max": "const:255",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#3#waveMeasurementInstrumentation",
+            "value": "data:waveMeasurementInstrumentation",
+            "valid_min": "const:0",
+            "valid_max": "const:15",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#decimalScaleOfFollowingSignificands",
+            "value": "data:decimalScaleOfFollowingSignificands",
+            "valid_min": "const:-127",
+            "valid_max": "const:128",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#scaledMaximumNonDirectionalSpectralWaveDensityByFrequency",
+            "value": "data:scaledMaximumNonDirectionalSpectralWaveDensityByFrequency",
+            "valid_min": "const:0",
+            "valid_max": "const:16383",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#decimalScaleOfFollowingSignificands",
+            "value": "data:decimalScaleOfFollowingSignificands",
+            "valid_min": "const:-127",
+            "valid_max": "const:128",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#bandContainingMaximumNonDirectionalSpectralWaveDensity",
+            "value": "data:bandContainingMaximumNonDirectionalSpectralWaveDensity",
+            "valid_min": "const:0",
+            "valid_max": "const:127",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#delayedDescriptorReplicationFactor",
+            "value": "data:delayedDescriptorReplicationFactor",
+            "valid_min": "const:0",
+            "valid_max": "const:255",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#wavebandCentralFrequency",
+            "value": "data:wavebandCentralFrequency",
+            "valid_min": "const:0.0",
+            "valid_max": "const:1.023",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#spectralWaveDensityRatio",
+            "value": "data:spectralWaveDensityRatio",
+            "valid_min": "const:0",
+            "valid_max": "const:127",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#meanDirectionFromWhichWavesAreComing",
+            "value": "data:meanDirectionFromWhichWavesAreComing",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#principalDirectionFromWhichWavesAreComing",
+            "value": "data:principalDirectionFromWhichWavesAreComing",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#firstNormalizedPolarCoordinateFromFourierCoefficients",
+            "value": "data:firstNormalizedPolarCoordinateFromFourierCoefficients",
+            "valid_min": "const:0.0",
+            "valid_max": "const:1.27",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#secondNormalizedPolarCoordinateFromFourierCoefficients",
+            "value": "data:secondNormalizedPolarCoordinateFromFourierCoefficients",
+            "valid_min": "const:0.0",
+            "valid_max": "const:1.27",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#3#delayedDescriptorReplicationFactor",
+            "value": "data:delayedDescriptorReplicationFactor",
+            "valid_min": "const:0",
+            "valid_max": "const:255",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#3#decimalScaleOfFollowingSignificands",
+            "value": "data:decimalScaleOfFollowingSignificands",
+            "valid_min": "const:-127",
+            "valid_max": "const:128",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#scaledNonDirectionalSpectralWaveDensityByFrequency",
+            "value": "data:scaledNonDirectionalSpectralWaveDensityByFrequency",
+            "valid_min": "const:0",
+            "valid_max": "const:16383",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#4#decimalScaleOfFollowingSignificands",
+            "value": "data:decimalScaleOfFollowingSignificands",
+            "valid_min": "const:-127",
+            "valid_max": "const:128",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#directionFromWhichWavesAreComing",
+            "value": "data:directionFromWhichWavesAreComing",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#directionalSpreadOfWaves",
+            "value": "data:directionalSpreadOfWaves",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#4#delayedDescriptorReplicationFactor",
+            "value": "data:delayedDescriptorReplicationFactor",
+            "valid_min": "const:0",
+            "valid_max": "const:255",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#5#decimalScaleOfFollowingSignificands",
+            "value": "data:decimalScaleOfFollowingSignificands",
+            "valid_min": "const:-127",
+            "valid_max": "const:128",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#1#scaledDirectionalSpectralWaveDensityByFrequency",
+            "value": "data:scaledDirectionalSpectralWaveDensityByFrequency",
+            "valid_min": "const:0",
+            "valid_max": "const:16383",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#6#decimalScaleOfFollowingSignificands",
+            "value": "data:decimalScaleOfFollowingSignificands",
+            "valid_min": "const:-127",
+            "valid_max": "const:128",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#directionFromWhichWavesAreComing",
+            "value": "data:directionFromWhichWavesAreComing",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        },
+        {
+            "eccodes_key": "#2#directionalSpreadOfWaves",
+            "value": "data:directionalSpreadOfWaves",
+            "valid_min": "const:0",
+            "valid_max": "const:511",
+            "scale": "const:0",
+            "offset": "const:0"
+        }
+    ]
+}
