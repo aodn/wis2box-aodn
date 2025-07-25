@@ -22,7 +22,7 @@ mcf:
     version: 1.0
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+    identifier: urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
     hierarchylevel: dataset
 
 identification:
@@ -46,7 +46,7 @@ identification:
                 url: https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline
     extents:
         spatial:
-            - bbox: [143.72230,-38.75452,143.72362,-38.75350]
+            - bbox: [147.44728,-43.19308,147.44785,-43.1926]
               crs: 4326
         temporal:
             - begin: 2025-07-15
