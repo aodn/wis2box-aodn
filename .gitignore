@@ -16,7 +16,7 @@ wheels/
 .terraform.lock.hcl
 terraform.tfstate
 .DS_Store
-*.json
+wis2-terraform/*.json
 terraform.tfstate.backup
 test.tf
 tmp
