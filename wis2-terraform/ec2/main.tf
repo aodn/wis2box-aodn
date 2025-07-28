@@ -1,11 +1,11 @@
 # This Terraform configuration creates an EC2 instance for WIS2BOX applications.
 resource "aws_instance" "wis2box_apps" {
-  ami                    = "ami-010876b9ddd38475e"
-  instance_type          = "t3.medium"
-  subnet_id              = "subnet-02b17a3e5362f9549" #  poc-imos-wis-public-subnet-2a
-  vpc_security_group_ids = ["sg-02095093bced267c7"]  # poc-imos-wis2-SG
+  ami                         = "ami-010876b9ddd38475e"
+  instance_type               = "t3.medium"
+  subnet_id                   = "subnet-02b17a3e5362f9549" #  poc-imos-wis-public-subnet-2a
+  vpc_security_group_ids      = ["sg-02095093bced267c7"]   # poc-imos-wis2-SG
   associate_public_ip_address = true
-  key_name               = "wis2"
+  key_name                    = "wis2"
 
   user_data = <<-EOF
               #!/bin/bash
@@ -55,7 +55,7 @@ resource "aws_instance" "wis2box_apps" {
   }
 
   tags = {
-    Name = var.instance_name,
+    Name    = var.instance_name,
     AutoOff = "False",
     Project = "poc-imos-wis2.0"
   }
