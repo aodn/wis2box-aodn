@@ -28,7 +28,16 @@ resource "aws_instance" "wis2box_apps" {
 
               # Install EFS Client
               apt-get update
-              apt-get -y install nfs-common
+              apt-get -y install git binutils rustc cargo pkg-config libssl-dev gettext
+
+              # Check network connectivity
+              curl -I https://github.com || { echo "Network error: Cannot reach GitHub"; exit 1; }
+
+              cd /opt
+              git clone --branch v2.3.1 https://github.com/aws/efs-utils || { echo "git clone failed"; exit 1; }
+              cd efs-utils
+              ./build-deb.sh || { echo "efs-utils build failed"; exit 1; }
+              apt-get -y install ./build/amazon-efs-utils*deb || { echo "efs-utils install failed"; exit 1; }
 
               # Create mount point for EFS
               mkdir -p /mnt/efs-mount-point
