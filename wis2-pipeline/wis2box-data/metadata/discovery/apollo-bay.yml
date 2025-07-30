@@ -9,12 +9,12 @@ wis2box:
                 - plugin: wis2box.data.csv2bufr.ObservationDataCSV2BUFR
                   template: wave_buoy_template
                   notify: true
-                  buckets: 
+                  buckets:
                     - ${WIS2BOX_STORAGE_INCOMING}
                   file-pattern: '.*\.csv$'
             bufr4:
                 - plugin: wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON
-                  buckets: 
+                  buckets:
                     - ${WIS2BOX_STORAGE_INCOMING}
                   file-pattern: '.*\.bufr4$'
 
@@ -29,10 +29,10 @@ identification:
     title: Wave buoy observations made as part of the -- IMOS-WIS2.0
     abstract: Australian IMOS-WIS2.0 costal wave buoys observation
     dates:
-        creation: 2025-07-15
+        creation: 2025-07-30
     keywords:
         default:
-            keywords:
+            keywords:   #TODO: Double check with Nat
                 - surface weather
                 - observations
                 - ocean
@@ -49,7 +49,7 @@ identification:
             - bbox: [143.72230,-38.75452,143.72362,-38.75350]
               crs: 4326
         temporal:
-            - begin: 2025-07-15
+            - begin: 2025-08-30 # Set the date once productionized
               end: null
               resolution: PT30M # temporal resolution of the data, meaning how frequently observations are collected or reported.
                                 # Every 30 minutes
