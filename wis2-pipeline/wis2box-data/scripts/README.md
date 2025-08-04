@@ -55,7 +55,7 @@ Before using these scripts, ensure:
 
 ```bash
 # Navigate to scripts directory
-cd wis2-pipeline/wis2box-data/scripts
+cd /mnt/efs-mount-point/wis2box-data/scripts/
 
 # Execute the publishing script
 ./publish_metadata.sh
