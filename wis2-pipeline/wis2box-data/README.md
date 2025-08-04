@@ -11,9 +11,12 @@ wis2box-data/
 │   │   └── storm-bay.yml   # Storm Bay wave buoy metadata
 │   └── station/           # Station metadata
 │       └── station_list.csv # Station information registry
-└── mappings/              # Data format mappings
-    ├── wave_buoy_template.json          # BUFR template for wave data
-    └── wave_buoy_template_prototype.json # Template prototype
+├── mappings/              # Data format mappings
+│   ├── wave_buoy_template.json          # BUFR template for wave data
+│   └── wave_buoy_template_prototype.json # Template prototype
+└── scripts/               # Metadata management automation scripts
+    ├── publish_metadata.sh   # Automated metadata publishing
+    └── unpublish_metadata.sh # Automated metadata removal
 ```
 
 ## Metadata Management
