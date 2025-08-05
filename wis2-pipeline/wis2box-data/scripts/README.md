@@ -108,7 +108,10 @@ wis2box metadata discovery publish /data/wis2box/metadata/discovery/apollo-bay.y
 
 2. **Collection Cleanup**:
    - Removes data collections entirely
-   - Cleans up station metadata associations
+
+3. **Weather Metadata Removal**:
+   - Currently does not support removing station metadata collections by commands
+   - Must delete station metadata on wis2box-webapp manually with token.
 
 #### Usage
 

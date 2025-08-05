@@ -9,7 +9,8 @@
 # This script performs the reverse operations of publish_metadata.sh:
 # - Unpublishes discovery metadata from the catalogue
 # - Deletes collections from the API backend
-# - Currently does not support removing station metadata collections by cli
+# - Currently does not support removing station metadata collections by commands
+# - Must unpublish station metadata on wis2box-webapp manually with token.
 #
 # File locations:
 # - Discovery metadata: .yml files stored in ../metadata/discovery/
