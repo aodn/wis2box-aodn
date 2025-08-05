@@ -40,7 +40,7 @@ The station list contains the following fields:
 | `longitude` | Station longitude in decimal degrees | "143.7232" |
 | `elevation` | Station elevation in meters | "1" |
 | `barometer_height` | Barometer height in meters | "1" |
-| `territory_name` | Territory or country code | "FSM" |
+| `territory_name` | Territory or country code | "AUS" |
 | `wmo_region` | WMO region | "southWestPacific" |
 
 #### Current Stations
