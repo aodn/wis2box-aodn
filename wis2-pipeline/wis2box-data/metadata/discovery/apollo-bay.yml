@@ -1,0 +1,74 @@
+wis2box:
+    retention: P30D
+    topic_hierarchy: au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys
+    country: AUS
+    centre_id: au-bom-imos
+    data_mappings:
+        plugins:
+            csv:
+                - plugin: wis2box.data.csv2bufr.ObservationDataCSV2BUFR
+                  template: wave_buoy_template
+                  notify: true
+                  buckets:
+                    - ${WIS2BOX_STORAGE_INCOMING}
+                  file-pattern: '.*\.csv$'
+            bufr4:
+                - plugin: wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON
+                  buckets:
+                    - ${WIS2BOX_STORAGE_INCOMING}
+                  file-pattern: '.*\.bufr4$'
+
+mcf:
+    version: 1.0
+
+metadata:
+    identifier: urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+    hierarchylevel: dataset
+
+identification:
+    title: Wave buoy observations made as part of the -- IMOS-WIS2.0
+    abstract: Australian IMOS-WIS2.0 costal wave buoys observation
+    dates:
+        creation: 2025-07-30
+    keywords:
+        default:
+            keywords:   #TODO: Double check with Nat
+                - surface weather
+                - observations
+                - ocean
+                - surface current
+        wmo:
+            keywords:
+                - ocean
+            keywords_type: theme
+            vocabulary:
+                name: Earth system disciplines as defined by the WMO Unified Data Policy, Resolution 1 (Cg-Ext(2021), Annex 1.
+                url: https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline
+    extents:
+        spatial:
+            - bbox: [143.72230,-38.75452,143.72362,-38.75350]
+              crs: 4326
+        temporal:
+            - begin: 2025-08-30 # Set the date once productionized
+              end: null
+              resolution: PT30M # temporal resolution of the data, meaning how frequently observations are collected or reported.
+                                # Every 30 minutes
+    url: https://thredds.aodn.org.au/thredds/catalog/IMOS/COASTAL-WAVE-BUOYS/WAVE-BUOYS/REALTIME/WAVE-PARAMETERS/catalog.html
+    wmo_data_policy: core
+
+contact:
+    host:
+        organization: Integrated Marine Observing System (IMOS)
+        url: https://imos.org.au/
+        individualname: Integrated Marine Observing System (IMOS)
+        positionname: Integrated Marine Observing System (IMOS)
+        phone: "+61362267549"
+        fax: null
+        address: GPO Box 367, Hobart
+        city: Hobart
+        postalcode: "7001"
+        administrativearea: Hobart
+        country: Australia
+        email: imos@utas.edu.au
+        hoursofservice: 2200h - 0600h UTC
+        contactinstructions: email
