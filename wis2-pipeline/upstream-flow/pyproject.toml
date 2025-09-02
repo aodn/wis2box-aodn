@@ -1,6 +1,6 @@
 [project]
 name = "upstream-flow"
-version = "0.1.0"
+version = "1.0.0"
 description = "WIS2.0 upstream flow that run on prefect Data Platform to preprocess WIS2 data. "
 readme = "README.md"
 requires-python = ">=3.11"
