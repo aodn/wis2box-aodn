@@ -1,6 +1,7 @@
 from prefect import get_run_logger, task
 import pandas as pd
 import xarray as xr
+import os
 
 
 @task
