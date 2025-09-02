@@ -2,13 +2,14 @@ from prefect import get_run_logger, task
 from minio import Minio
 from prefect.blocks.system import Secret
 from prefect.variables import Variable
+import os
 
 
-@task()
+@task(retries=3, retry_delay_seconds=2)
 def load_to_minio(
     local_file: str,
     minio_path: str,
-    incoming_bucket: str='wis2box-incoming'
+    incoming_bucket: str = 'wis2box-incoming'
 ) -> None:
     """Upload a local file to MinIO storage.
 
@@ -40,15 +41,13 @@ def load_to_minio(
         is_secure = False
         MINIO_STORAGE_ENDPOINT = MINIO_STORAGE_ENDPOINT.replace('http://', '')
 
-    try:
-        client = Minio(
-            endpoint=MINIO_STORAGE_ENDPOINT,
-            access_key=MINIO_STORAGE_USER,
-            secret_key=MINIO_STORAGE_PASSWORD,
-            secure=is_secure)
-        identifier = minio_path+'/'+local_file.split('/')[-1]
-        logger.info(f"Put into {incoming_bucket} : {local_file} as {identifier}")
-        client.fput_object(incoming_bucket, identifier, local_file)
-    except Exception as e:
-        logger.error(f'Failed to upload file into {incoming_bucket} at {MINIO_STORAGE_ENDPOINT}')
-        logger.error(f'Error: {e}')
+    client = Minio(
+        endpoint=MINIO_STORAGE_ENDPOINT,
+        access_key=MINIO_STORAGE_USER,
+        secret_key=MINIO_STORAGE_PASSWORD,
+        secure=is_secure)
+
+    identifier = os.path.join(minio_path, os.path.basename(local_file))
+
+    logger.info(f"Putting into {incoming_bucket} : {local_file} as {identifier}")
+    client.fput_object(incoming_bucket, identifier, local_file)
