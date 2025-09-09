@@ -79,7 +79,7 @@ if __name__ == "__main__":
         "--dataset-config",
         required=True,
         type=str,
-        help="Name of the dataset configuration. Example: 'APOLLO_BAY'",
+        help="Name of the dataset configuration. Example: 'config/APOLLO_BAY'",
     )
     args = parser.parse_args()
 

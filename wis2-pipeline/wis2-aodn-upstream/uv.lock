@@ -2628,7 +2628,7 @@ wheels = [
 
 [[package]]
 name = "wis2-aodn-upstream"
-version = "1.0.5"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "minio" },
