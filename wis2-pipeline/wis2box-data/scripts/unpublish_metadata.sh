@@ -87,11 +87,17 @@ wis2box data delete-collection "urn:wmo:md:au-bom-imos:wave-buoy-storm-bay" && p
 # =============================================================================
 # If you prefer to unpublish metadata manually, follow these steps:
 #
-# 1. Navigate to your wis2box directory:
-#    cd ~/wis2box
+# 1. LOGIN AWS account:
+#    aws sso login
 #
-# 2. Login to the management container:
-#    python3 wis2box-ctl.py login
+# 2. Login to the wis2 ecs:
+#    aws ecs execute-command \
+        # --region ap-southeast-2 \
+        # --cluster imos-wis2-test-edge \
+        # --task 9b862868d5ef467eb355d9aed1d568e3 \
+        # --container wis2box-management \
+        # --command "sh" \
+        # --interactive
 #
 # 3. Inside the container, run the unpublish commands individually:
 #    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/apollo-bay.yml
