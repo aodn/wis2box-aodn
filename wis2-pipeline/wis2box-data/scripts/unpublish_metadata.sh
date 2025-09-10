@@ -42,14 +42,6 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Function to check if container is running
-check_container() {
-    if ! docker ps | grep -q "wis2box-management"; then
-        print_error "wis2box-management container is not running!"
-        print_warning "Please start WIS2Box services first: python3 wis2box-ctl.py start"
-        exit 1
-    fi
-}
 
 # Function to confirm destructive operation
 confirm_unpublish() {
@@ -73,28 +65,21 @@ print_status "Starting WIS2Box metadata unpublishing process..."
 # Confirm destructive operation
 confirm_unpublish
 
-# Check if the management container is running
-check_container
-
 # -----------------------------------------------------------------------------
 # 1. Unpublish Discovery Metadata for Apollo Bay
 # -----------------------------------------------------------------------------
 print_status "Unpublishing discovery metadata for Apollo Bay..."
 
-docker exec -it wis2box-management bash -c '
-    wis2box metadata discovery unpublish urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay &&
-    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
-' && print_success "Apollo Bay metadata unpublished successfully" || print_error "Failed to unpublish Apollo Bay metadata"
+wis2box metadata discovery unpublish "urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay" &&
+wis2box data delete-collection "urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay" && print_success "Apollo Bay metadata unpublished successfully" || print_error "Failed to unpublish Apollo Bay metadata"
 
 # -----------------------------------------------------------------------------
 # 2. Unpublish Discovery Metadata for Storm Bay
 # -----------------------------------------------------------------------------
 print_status "Unpublishing discovery metadata for Storm Bay..."
 
-docker exec -it wis2box-management bash -c '
-    wis2box metadata discovery unpublish urn:wmo:md:au-bom-imos:wave-buoy-storm-bay &&
-    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
-' && print_success "Storm Bay metadata unpublished successfully" || print_error "Failed to unpublish Storm Bay metadata"
+wis2box metadata discovery unpublish "urn:wmo:md:au-bom-imos:wave-buoy-storm-bay" &&
+wis2box data delete-collection "urn:wmo:md:au-bom-imos:wave-buoy-storm-bay" && print_success "Storm Bay metadata unpublished successfully" || print_error "Failed to unpublish Storm Bay metadata"
 
 
 # =============================================================================
