@@ -56,11 +56,11 @@ print_status "Starting WIS2Box metadata publishing process..."
 # -----------------------------------------------------------------------------
 # 1. Publish Discovery Metadata for Apollo Bay
 # -----------------------------------------------------------------------------
-publish_metadata apollo-bay
+publish_metadata wave-buoy-apollo-bay
 # -----------------------------------------------------------------------------
 # 2. Publish Discovery Metadata for Storm Bay
 # -----------------------------------------------------------------------------
-publish_metadata storm-bay
+publish_metadata wave-buoy-storm-bay
 
 # -----------------------------------------------------------------------------
 # 3. Publish Station Metadata for Wave Buoys
