@@ -56,6 +56,18 @@ confirm_unpublish() {
     fi
 }
 
+unpublish_metadata(){
+    WIS2_BUOY_SITE_NAME=$1
+
+    print_status "Unpublishing discovery metadata for $WIS2_BUOY_SITE_NAME ..."
+
+    # Unpublish discovery metadata and delete collection
+    wis2box metadata discovery unpublish "urn:wmo:md:au-bom-imos:$WIS2_BUOY_SITE_NAME" && \
+    wis2box data delete-collection "urn:wmo:md:au-bom-imos:$WIS2_BUOY_SITE_NAME" && \
+    print_success "$WIS2_BUOY_SITE_NAME metadata unpublished successfully" || \
+    print_error "Failed to unpublish $WIS2_BUOY_SITE_NAME metadata"
+}
+
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
@@ -68,18 +80,12 @@ confirm_unpublish
 # -----------------------------------------------------------------------------
 # 1. Unpublish Discovery Metadata for Apollo Bay
 # -----------------------------------------------------------------------------
-print_status "Unpublishing discovery metadata for Apollo Bay..."
-
-wis2box metadata discovery unpublish "urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay" &&
-wis2box data delete-collection "urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay" && print_success "Apollo Bay metadata unpublished successfully" || print_error "Failed to unpublish Apollo Bay metadata"
+unpublish_metadata wave-buoy-appollo-bay
 
 # -----------------------------------------------------------------------------
 # 2. Unpublish Discovery Metadata for Storm Bay
 # -----------------------------------------------------------------------------
-print_status "Unpublishing discovery metadata for Storm Bay..."
-
-wis2box metadata discovery unpublish "urn:wmo:md:au-bom-imos:wave-buoy-storm-bay" &&
-wis2box data delete-collection "urn:wmo:md:au-bom-imos:wave-buoy-storm-bay" && print_success "Storm Bay metadata unpublished successfully" || print_error "Failed to unpublish Storm Bay metadata"
+unpublish_metadata wave-buoy-storm-bay
 
 
 # =============================================================================

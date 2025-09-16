@@ -6,7 +6,7 @@
 # This script is used to publish dataset discovery metadata and weather station
 # metadata to WIS2Box instead of manually creating metadata from WIS2Box webapp.
 #
-# File locations:
+# Metadata File locations:
 # - Discovery metadata: .yml files stored in ../metadata/discovery/
 # - Weather station metadata: .csv files stored in ../metadata/station/
 # =============================================================================
@@ -37,6 +37,16 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+publish_metadata(){
+    WIS2_BUOY_SITE_NAME=$1
+    print_status "Publishing discovery metadata for $WIS2_BUOY_SITE_NAME ..."
+
+    wis2box data add-collection /data/wis2box/metadata/discovery/$WIS2_BUOY_SITE_NAME.yml && \
+    wis2box metadata discovery publish /data/wis2box/metadata/discovery/$WIS2_BUOY_SITE_NAME.yml && \
+    print_success "$WIS2_BUOY_SITE_NAME metadata published successfully" || \
+    print_error "Failed to publish $WIS2_BUOY_SITE_NAME metadata"
+
+}
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
@@ -46,26 +56,18 @@ print_status "Starting WIS2Box metadata publishing process..."
 # -----------------------------------------------------------------------------
 # 1. Publish Discovery Metadata for Apollo Bay
 # -----------------------------------------------------------------------------
-print_status "Publishing discovery metadata for Apollo Bay..."
-
-wis2box data add-collection /data/wis2box/metadata/discovery/apollo-bay.yml &&
-wis2box metadata discovery publish /data/wis2box/metadata/discovery/apollo-bay.yml && print_success "Apollo Bay metadata published successfully" || print_error "Failed to publish Apollo Bay metadata"
-
+publish_metadata apollo-bay
 # -----------------------------------------------------------------------------
 # 2. Publish Discovery Metadata for Storm Bay
 # -----------------------------------------------------------------------------
-print_status "Publishing discovery metadata for Storm Bay..."
-
-
-wis2box data add-collection /data/wis2box/metadata/discovery/storm-bay.yml &&
-wis2box metadata discovery publish /data/wis2box/metadata/discovery/storm-bay.yml && print_success "Storm Bay metadata published successfully" || print_error "Failed to publish Storm Bay metadata"
+publish_metadata storm-bay
 
 # -----------------------------------------------------------------------------
 # 3. Publish Station Metadata for Wave Buoys
 # -----------------------------------------------------------------------------
 print_status "Publishing station metadata for wave buoys..."
 
-
+#TODO: if more topics will be published, can refactor codes here to manage weather station metadata.
 wis2box metadata station publish-collection \
     -p /data/wis2box/metadata/station/station_list.csv \
     -th origin/a/wis2/au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys && print_success "Wave buoy station metadata published successfully" || print_error "Failed to publish station metadata"
