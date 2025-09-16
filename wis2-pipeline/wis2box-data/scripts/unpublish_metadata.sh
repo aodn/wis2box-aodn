@@ -106,11 +106,11 @@ unpublish_metadata wave-buoy-storm-bay
         # --interactive
 #
 # 3. Inside the container, run the unpublish commands individually:
-#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/apollo-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:apollo-bay
+#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
+#    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
 #
 # 4. Repeat for other metadata files as needed:
-#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/storm-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:storm-bay
+#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/wave-buoy-storm-bay.yml
+#    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
 #
 # =============================================================================
