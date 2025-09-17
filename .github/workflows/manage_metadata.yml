@@ -1,0 +1,23 @@
+name: Deploy the metadata to ecs wis2box-management servcie and publish wis2 datasets metadata
+on:
+  push:
+    branches:
+      - "feature/**"
+      - "fix/**"
+      - "main"
+    paths:
+      - 'wis2-pipeline/wis2box-data/**'
+      - '.github/workflows/**'
+
+jobs:
+  ecs-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::704910415367:role/wis2-metadata-publication
+          aws-region: ap-southeast-2
+      - name: Run ECS CLI
+        run: |
+          aws ecs list-services --cluster imos-wis2-test-edge
