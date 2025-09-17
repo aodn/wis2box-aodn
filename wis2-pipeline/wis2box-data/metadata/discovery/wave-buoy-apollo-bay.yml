@@ -32,7 +32,7 @@ identification:
         creation: 2025-07-30
     keywords:
         default:
-            keywords:   #TODO: Double check with Nat
+            keywords:
                 - surface weather
                 - observations
                 - ocean

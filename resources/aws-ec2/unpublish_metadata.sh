@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # =============================================================================
@@ -42,6 +43,14 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# Function to check if container is running
+check_container() {
+    if ! docker ps | grep -q "wis2box-management"; then
+        print_error "wis2box-management container is not running!"
+        print_warning "Please start WIS2Box services first: python3 wis2box-ctl.py start"
+        exit 1
+    fi
+}
 
 # Function to confirm destructive operation
 confirm_unpublish() {
@@ -56,18 +65,6 @@ confirm_unpublish() {
     fi
 }
 
-unpublish_metadata(){
-    WIS2_BUOY_SITE_NAME=$1
-
-    print_status "Unpublishing discovery metadata for $WIS2_BUOY_SITE_NAME ..."
-
-    # Unpublish discovery metadata and delete collection
-    wis2box metadata discovery unpublish "urn:wmo:md:au-bom-imos:$WIS2_BUOY_SITE_NAME" && \
-    wis2box data delete-collection "urn:wmo:md:au-bom-imos:$WIS2_BUOY_SITE_NAME" && \
-    print_success "$WIS2_BUOY_SITE_NAME metadata unpublished successfully" || \
-    print_error "Failed to unpublish $WIS2_BUOY_SITE_NAME metadata"
-}
-
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
@@ -77,15 +74,28 @@ print_status "Starting WIS2Box metadata unpublishing process..."
 # Confirm destructive operation
 confirm_unpublish
 
+# Check if the management container is running
+check_container
+
 # -----------------------------------------------------------------------------
 # 1. Unpublish Discovery Metadata for Apollo Bay
 # -----------------------------------------------------------------------------
-unpublish_metadata wave-buoy-appollo-bay
+print_status "Unpublishing discovery metadata for Apollo Bay..."
+
+docker exec -it wis2box-management bash -c '
+    wis2box metadata discovery unpublish urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay &&
+    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+' && print_success "Apollo Bay metadata unpublished successfully" || print_error "Failed to unpublish Apollo Bay metadata"
 
 # -----------------------------------------------------------------------------
 # 2. Unpublish Discovery Metadata for Storm Bay
 # -----------------------------------------------------------------------------
-unpublish_metadata wave-buoy-storm-bay
+print_status "Unpublishing discovery metadata for Storm Bay..."
+
+docker exec -it wis2box-management bash -c '
+    wis2box metadata discovery unpublish urn:wmo:md:au-bom-imos:wave-buoy-storm-bay &&
+    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
+' && print_success "Storm Bay metadata unpublished successfully" || print_error "Failed to unpublish Storm Bay metadata"
 
 
 # =============================================================================
@@ -93,24 +103,18 @@ unpublish_metadata wave-buoy-storm-bay
 # =============================================================================
 # If you prefer to unpublish metadata manually, follow these steps:
 #
-# 1. LOGIN AWS account:
-#    aws sso login
+# 1. Navigate to your wis2box directory:
+#    cd ~/wis2box
 #
-# 2. Login to the wis2 ecs:
-#    aws ecs execute-command \
-        # --region ap-southeast-2 \
-        # --cluster imos-wis2-test-edge \
-        # --task 9b862868d5ef467eb355d9aed1d568e3 \
-        # --container wis2box-management \
-        # --command "sh" \
-        # --interactive
+# 2. Login to the management container:
+#    python3 wis2box-ctl.py login
 #
 # 3. Inside the container, run the unpublish commands individually:
-#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/apollo-bay.yml
+#    wis2box data delete-collection urn:wmo:md:au-bom-imos:apollo-bay
 #
 # 4. Repeat for other metadata files as needed:
-#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/wave-buoy-storm-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
+#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/storm-bay.yml
+#    wis2box data delete-collection urn:wmo:md:au-bom-imos:storm-bay
 #
 # =============================================================================
