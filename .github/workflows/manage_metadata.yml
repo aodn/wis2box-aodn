@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: aws-actions/configure-aws-credentials@v3
+      - uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: arn:aws:iam::704910415367:role/wis2-metadata-publication
           #TODO: Granularize the permissions of this IAM role.
@@ -30,5 +30,5 @@ jobs:
           --cluster imos-wis2-test-edge \
           --task c583c6a595d34df0b99cd779f2b35b8f \
           --container wis2box-management \
-          --command "wis2box" \
+          --command "bash ./data/wis2box/scripts/publish_metadata.sh" \
           --interactive
