@@ -18,10 +18,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: aws-actions/configure-aws-credentials@v2
+      - uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: arn:aws:iam::704910415367:role/wis2-metadata-publication
+          #TODO: Granularize the permissions of this IAM role.
           aws-region: ap-southeast-2
       - name: Run ECS CLI
         run: |
-          aws ecs list-services --cluster imos-wis2-test-edge
+          aws ecs execute-command \
+          --region ap-southeast-2 \
+          --cluster imos-wis2-test-edge \
+          --task c583c6a595d34df0b99cd779f2b35b8f \
+          --container wis2box-management \
+          --command "wis2box" \
+          --interactive
