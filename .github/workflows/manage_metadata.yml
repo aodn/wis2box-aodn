@@ -25,10 +25,9 @@ jobs:
           aws-region: ap-southeast-2
       - name: Run ECS CLI
         run: |
-          aws ecs execute-command \
+          unbuffer aws ecs execute-command \
           --region ap-southeast-2 \
           --cluster imos-wis2-test-edge \
           --task c583c6a595d34df0b99cd779f2b35b8f \
           --container wis2box-management \
           --command "bash /data/wis2box/scripts/publish_metadata.sh" \
-          --interactive
