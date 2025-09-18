@@ -27,6 +27,16 @@ jobs:
       - name: Install expect
         run: sudo apt-get update && sudo apt-get install -y expect
 
+      - name: Run ECS CLI to update metadata files
+        run: |
+          unbuffer aws ecs execute-command \
+          --region ap-southeast-2 \
+          --cluster imos-wis2-test-edge \
+          --task c583c6a595d34df0b99cd779f2b35b8f \
+          --container wis2box-management \
+          --command "bash /data/wis2box/scripts/update_metadata.sh" \
+          --interactive
+
       - name: Run ECS CLI to publish metadata
         run: |
           unbuffer aws ecs execute-command \
