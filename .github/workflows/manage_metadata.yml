@@ -37,7 +37,9 @@ jobs:
           --command "bash /data/wis2box/scripts/update_metadata.sh" \
           --interactive
 
+      # If the previous step is successful, run the publish_metadata.sh script
       - name: Run ECS CLI to publish metadata
+        if: success()
         run: |
           unbuffer aws ecs execute-command \
           --region ap-southeast-2 \

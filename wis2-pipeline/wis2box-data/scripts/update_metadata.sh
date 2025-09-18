@@ -84,6 +84,10 @@ print_status "Starting WIS2Box metadata update process..."
 
 BACKUP_DIR=""
 
+if [ -d "./wis2box-aodn" ] && [ "$(ls -A ./wis2box-aodn 2>/dev/null)" ]; then
+    rm -rf wis2box-aodn 2>/dev/null || true
+fi
+
 # Step 1: Create backup of existing metadata
 if BACKUP_DIR=$(backup_metadata); then
     print_success "Backup process completed"
