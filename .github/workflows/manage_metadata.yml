@@ -35,3 +35,4 @@ jobs:
           --task c583c6a595d34df0b99cd779f2b35b8f \
           --container wis2box-management \
           --command "bash /data/wis2box/scripts/publish_metadata.sh" \
+          --interactive
