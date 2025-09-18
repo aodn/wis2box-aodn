@@ -1,4 +1,4 @@
-name: Deploy the metadata to ecs wis2box-management servcie and publish wis2 datasets metadata
+name: Deploy the metadata to ecs wis2box-management service and publish wis2 datasets metadata
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
       - "fix/**"
       - "main"
     paths:
-      - 'wis2-pipeline/wis2box-data/**'
+      - 'wis2-pipeline/wis2box-data/metadata/**'
       - '.github/workflows/**'
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
       - name: Install expect
         run: sudo apt-get update && sudo apt-get install -y expect
 
-      - name: Run ECS CLI
+      - name: Run ECS CLI to publish metadata
         run: |
           unbuffer aws ecs execute-command \
           --region ap-southeast-2 \
