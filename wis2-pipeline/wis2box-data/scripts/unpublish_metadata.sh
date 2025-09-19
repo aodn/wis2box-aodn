@@ -68,6 +68,11 @@ unpublish_metadata(){
     print_error "Failed to unpublish $WIS2_BUOY_SITE_NAME metadata"
 }
 
+# List all discovery metadata files from ../metadata/discovery/
+list_discovery_metadata(){
+    ls ../metadata/discovery/*.yml | xargs -n 1 basename | sed 's/\.yml$//'
+}
+
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
@@ -80,13 +85,9 @@ confirm_unpublish
 # -----------------------------------------------------------------------------
 # 1. Unpublish Discovery Metadata for Apollo Bay
 # -----------------------------------------------------------------------------
-unpublish_metadata wave-buoy-appollo-bay
-
-# -----------------------------------------------------------------------------
-# 2. Unpublish Discovery Metadata for Storm Bay
-# -----------------------------------------------------------------------------
-unpublish_metadata wave-buoy-storm-bay
-
+for site in $(list_discovery_metadata); do
+    unpublish_metadata $site
+done
 
 # =============================================================================
 # MANUAL ALTERNATIVE

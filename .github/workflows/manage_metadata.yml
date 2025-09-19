@@ -8,7 +8,8 @@ on:
     paths:
       - 'wis2-pipeline/wis2box-data/metadata/**'
       - '.github/workflows/**'
-
+    #TODO: remove the branch filter after testing
+    
 permissions:
   id-token: write
   contents: read
@@ -27,24 +28,12 @@ jobs:
       - name: Install expect
         run: sudo apt-get update && sudo apt-get install -y expect
 
-      - name: Run ECS CLI to update metadata files
+      - name: Run ECS CLI to update metadata files and publish metadata
         run: |
           unbuffer aws ecs execute-command \
           --region ap-southeast-2 \
           --cluster imos-wis2-test-edge \
           --task c583c6a595d34df0b99cd779f2b35b8f \
           --container wis2box-management \
-          --command "bash /data/wis2box/scripts/update_metadata.sh" \
-          --interactive
-
-      # If the previous step is successful, run the publish_metadata.sh script
-      - name: Run ECS CLI to publish metadata
-        if: success()
-        run: |
-          unbuffer aws ecs execute-command \
-          --region ap-southeast-2 \
-          --cluster imos-wis2-test-edge \
-          --task c583c6a595d34df0b99cd779f2b35b8f \
-          --container wis2box-management \
-          --command "bash /data/wis2box/scripts/publish_metadata.sh" \
+          --command "cd /data/wis2box/scripts/ && ./update_metadata.sh && ./publish_metadata.sh"  \
           --interactive
