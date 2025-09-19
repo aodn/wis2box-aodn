@@ -3,11 +3,9 @@ on:
   push:
     branches:
       - "feature/**"
-      - "fix/**"
       - "main"
     paths:
       - 'wis2-pipeline/wis2box-data/metadata/**'
-      - '.github/workflows/**'
     #TODO: remove the branch filter after testing
     
 permissions:
