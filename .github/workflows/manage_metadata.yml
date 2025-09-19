@@ -2,11 +2,9 @@ name: Deploy the metadata to ecs wis2box-management service and publish wis2 dat
 on:
   push:
     branches:
-      - "feature/**"
       - "main"
     paths:
       - 'wis2-pipeline/wis2box-data/metadata/**'
-    #TODO: remove the branch filter after testing
     
 permissions:
   id-token: write
