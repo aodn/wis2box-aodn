@@ -22,7 +22,7 @@ mcf:
     version: 1.0
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
+    identifier: urn:wmo:md:au-bom-imos:wave-buoy-test-cicd
     hierarchylevel: dataset
 
 identification:
