@@ -22,7 +22,7 @@ mcf:
     version: 1.0
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:z-test-cicd
+    identifier: urn:wmo:md:au-bom-imos:z-cicd-test
     hierarchylevel: dataset
 
 identification:
