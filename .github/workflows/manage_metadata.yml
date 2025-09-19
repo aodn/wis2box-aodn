@@ -35,5 +35,5 @@ jobs:
           --cluster imos-wis2-test-edge \
           --task c583c6a595d34df0b99cd779f2b35b8f \
           --container wis2box-management \
-          --command "cd /data/wis2box/scripts && ./update_metadata.sh && ./publish_metadata.sh"  \
+          --command "bash /data/wis2box/scripts/update_metadata.sh && bash /data/wis2box/scripts/publish_metadata.sh"  \
           --interactive
