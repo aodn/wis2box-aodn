@@ -22,7 +22,7 @@ mcf:
     version: 1.0
 
 metadata:
-    identifier: urn:wmo:md:au-imos:wave-buoy
+    identifier: urn:wmo:md:au-imos:wave-buoys
     hierarchylevel: dataset
 
 identification:
