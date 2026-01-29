@@ -97,8 +97,8 @@ print_status "Metadata publishing process completed!"
         # --interactive
 #
 # 3. Inside the container, run the commands individually:
-#    wis2box data add-collection /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
-#    wis2box metadata discovery publish /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
+#    wis2box data add-collection /data/wis2box/metadata/discovery/wave-buoy.yml
+#    wis2box metadata discovery publish /data/wis2box/metadata/discovery/wave-buoy.yml
 #
 # 4. Repeat for other metadata files as needed
 
