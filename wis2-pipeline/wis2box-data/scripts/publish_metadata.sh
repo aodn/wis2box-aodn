@@ -47,6 +47,12 @@ publish_metadata(){
     print_error "Failed to publish $WIS2_BUOY_SITE_NAME metadata"
 
 }
+
+# List all discovery metadata files from ../metadata/discovery/
+list_discovery_metadata(){
+    ls ../metadata/discovery/*.yml | xargs -n 1 basename | sed 's/\.yml$//'
+}
+
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
@@ -54,16 +60,15 @@ publish_metadata(){
 print_status "Starting WIS2Box metadata publishing process..."
 
 # -----------------------------------------------------------------------------
-# 1. Publish Discovery Metadata for Apollo Bay
+# 1. Publish Discovery Metadata for all files in ../metadata/discovery/
 # -----------------------------------------------------------------------------
-publish_metadata wave-buoy-apollo-bay
-# -----------------------------------------------------------------------------
-# 2. Publish Discovery Metadata for Storm Bay
-# -----------------------------------------------------------------------------
-publish_metadata wave-buoy-storm-bay
+for site in $(list_discovery_metadata); do
+    publish_metadata $site
+done
+
 
 # -----------------------------------------------------------------------------
-# 3. Publish Station Metadata for Wave Buoys
+# 2. Publish Station Metadata for Wave Buoys
 # -----------------------------------------------------------------------------
 print_status "Publishing station metadata for wave buoys..."
 
@@ -96,4 +101,9 @@ print_status "Metadata publishing process completed!"
 #    wis2box metadata discovery publish /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
 #
 # 4. Repeat for other metadata files as needed
+
+# Note: you need to add topic before publishing station metadata if not done before:
+# run the command below to add topic for wave buoys on wis2box-management container:
+#   wis2box metadata station add-topic origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys
+
 # =============================================================================
