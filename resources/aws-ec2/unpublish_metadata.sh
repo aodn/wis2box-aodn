@@ -83,8 +83,8 @@ check_container
 print_status "Unpublishing discovery metadata for Apollo Bay..."
 
 docker exec -it wis2box-management bash -c '
-    wis2box metadata discovery unpublish urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay &&
-    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+    wis2box metadata discovery unpublish urn:wmo:md:au-imos:wave-buoy-apollo-bay &&
+    wis2box data delete-collection urn:wmo:md:au-imos:wave-buoy-apollo-bay
 ' && print_success "Apollo Bay metadata unpublished successfully" || print_error "Failed to unpublish Apollo Bay metadata"
 
 # -----------------------------------------------------------------------------
@@ -93,8 +93,8 @@ docker exec -it wis2box-management bash -c '
 print_status "Unpublishing discovery metadata for Storm Bay..."
 
 docker exec -it wis2box-management bash -c '
-    wis2box metadata discovery unpublish urn:wmo:md:au-bom-imos:wave-buoy-storm-bay &&
-    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
+    wis2box metadata discovery unpublish urn:wmo:md:au-imos:wave-buoy-storm-bay &&
+    wis2box data delete-collection urn:wmo:md:au-imos:wave-buoy-storm-bay
 ' && print_success "Storm Bay metadata unpublished successfully" || print_error "Failed to unpublish Storm Bay metadata"
 
 
@@ -111,10 +111,10 @@ docker exec -it wis2box-management bash -c '
 #
 # 3. Inside the container, run the unpublish commands individually:
 #    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/apollo-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:apollo-bay
+#    wis2box data delete-collection urn:wmo:md:au-imos:apollo-bay
 #
 # 4. Repeat for other metadata files as needed:
 #    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/storm-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:storm-bay
+#    wis2box data delete-collection urn:wmo:md:au-imos:storm-bay
 #
 # =============================================================================

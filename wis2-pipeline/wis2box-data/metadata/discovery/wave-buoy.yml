@@ -1,8 +1,8 @@
 wis2box:
     retention: P30D
-    topic_hierarchy: au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys
+    topic_hierarchy: au-imos/data/core/ocean/surface-based-observations/wave-buoys
     country: AUS
-    centre_id: au-bom-imos
+    centre_id: au-imos
     data_mappings:
         plugins:
             csv:
@@ -22,7 +22,7 @@ mcf:
     version: 1.0
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+    identifier: urn:wmo:md:au-imos:wave-buoy
     hierarchylevel: dataset
 
 identification:

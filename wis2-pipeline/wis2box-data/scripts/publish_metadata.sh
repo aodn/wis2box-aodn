@@ -70,7 +70,7 @@ print_status "Publishing station metadata for wave buoys..."
 #TODO: if more topics will be published, can refactor codes here to manage weather station metadata.
 wis2box metadata station publish-collection \
     -p /data/wis2box/metadata/station/station_list.csv \
-    -th origin/a/wis2/au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys && print_success "Wave buoy station metadata published successfully" || print_error "Failed to publish station metadata"
+    -th origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys && print_success "Wave buoy station metadata published successfully" || print_error "Failed to publish station metadata"
 
 print_status "Metadata publishing process completed!"
 

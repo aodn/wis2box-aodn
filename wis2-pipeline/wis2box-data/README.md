@@ -73,12 +73,12 @@ Each discovery metadata file contains:
 ```yaml
 wis2box:
     retention: P30D
-    topic_hierarchy: au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys
+    topic_hierarchy: au-imos/data/core/ocean/surface-based-observations/wave-buoys
     country: AUS
-    centre_id: au-bom-imos
+    centre_id: au-imos
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+    identifier: urn:wmo:md:au-imos:wave-buoy-apollo-bay
     hierarchylevel: dataset
 
 identification:
@@ -103,7 +103,7 @@ Similar structure with different spatial extents:
 
 #### Key Configuration Elements
 
-- **Topic Hierarchy**: `au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys`
+- **Topic Hierarchy**: `au-imos/data/core/ocean/surface-based-observations/wave-buoys`
 - **Data Policy**: Core data following WMO Unified Data Policy
 - **Retention**: 30 days (P30D)
 - **Contact**: Integrated Marine Observing System (IMOS)
@@ -161,7 +161,7 @@ This implementation is specifically configured for AODN's requirements:
 - **Data Source**: Coastal wave buoys providing near real-time observations
 - **Geographic Focus**: Australian coastal waters
 - **Data Access**: Integration with THREDDS data server
-- **Centre ID**: `au-bom-imos` following WMO centre identification
+- **Centre ID**: `au-imos` following WMO centre identification
 
 ### Managing Metadata
 
