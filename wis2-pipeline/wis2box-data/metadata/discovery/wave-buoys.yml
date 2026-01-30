@@ -46,7 +46,7 @@ identification:
                 url: https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline
     extents:
         spatial:
-            - bbox: [143.72230,-38.75452,143.72362,-38.75350]
+            - bbox: [112.00000,-44.00000,155.00000,-10.00000]
               crs: 4326
         temporal:
             - begin: 2025-08-30 # Set the date once productionized
