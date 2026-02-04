@@ -83,8 +83,8 @@ check_container
 print_status "Unpublishing discovery metadata for Apollo Bay..."
 
 docker exec -it wis2box-management bash -c '
-    wis2box metadata discovery unpublish urn:wmo:md:au-imos:wave-buoy-apollo-bay &&
-    wis2box data delete-collection urn:wmo:md:au-imos:wave-buoy-apollo-bay
+    wis2box metadata discovery unpublish urn:wmo:md:au-imos:wave-buoys &&
+    wis2box data delete-collection urn:wmo:md:au-imos:wave-buoys
 ' && print_success "Apollo Bay metadata unpublished successfully" || print_error "Failed to unpublish Apollo Bay metadata"
 
 # -----------------------------------------------------------------------------

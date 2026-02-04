@@ -7,7 +7,7 @@ This section documents the metadata management implementation for AODN's wis2box
 wis2box-data/
 ├── metadata/
 │   ├── discovery/          # Discovery metadata (MCF YAML files)
-│   │   ├── wave-buoy-apollo-bay.yml  # Apollo Bay wave buoy metadata
+│   │   ├── wave-buoys.yml  # Apollo Bay wave buoy metadata
 │   │   └── wave-buoy-storm-bay.yml   # Storm Bay wave buoy metadata
 │   └── station/           # Station metadata
 │       └── station_list.csv # Station information registry
@@ -68,7 +68,7 @@ Each discovery metadata file contains:
 
 #### Wave Buoy Datasets
 
-##### Apollo Bay Wave Buoy (`wave-buoy-apollo-bay.yml`)
+##### Apollo Bay Wave Buoy (`wave-buoys.yml`)
 
 ```yaml
 wis2box:
@@ -78,7 +78,7 @@ wis2box:
     centre_id: au-imos
 
 metadata:
-    identifier: urn:wmo:md:au-imos:wave-buoy-apollo-bay
+    identifier: urn:wmo:md:au-imos:wave-buoys
     hierarchylevel: dataset
 
 identification:

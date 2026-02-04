@@ -84,8 +84,8 @@ cd ~/wis2box
 python3 wis2box-ctl.py login
 
 # Inside the container, execute commands:
-wis2box data add-collection /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
-wis2box metadata discovery publish /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
+wis2box data add-collection /data/wis2box/metadata/discovery/wave-buoys.yml
+wis2box metadata discovery publish /data/wis2box/metadata/discovery/wave-buoys.yml
 ```
 
 ### unpublish_metadata.sh

@@ -107,7 +107,7 @@ done
         # --interactive
 #
 #  Inside the container, run the unpublish commands individually:
-# wis2box metadata discovery unpublish urn:wmo:md:au-imos:wave-buoy-apollo-bay
-# wis2box data delete-collection urn:wmo:md:au-imos:wave-buoy-apollo-bay
+# wis2box metadata discovery unpublish urn:wmo:md:au-imos:wave-buoys
+# wis2box data delete-collection urn:wmo:md:au-imos:wave-buoys
 #
 # =============================================================================
