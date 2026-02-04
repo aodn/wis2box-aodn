@@ -93,20 +93,6 @@ identification:
               resolution: PT30M
 ```
 
-##### Storm Bay Wave Buoy (`wave-buoy-storm-bay.yml`)
-
-Similar structure with different spatial extents:
-- Bounding box: [147.44728,-43.19308,147.44785,-43.1926]
-- Start date: 2025-07-15
-- Same 30-minute temporal resolution
-
-#### Key Configuration Elements
-
-- **Topic Hierarchy**: `au-imos/data/core/ocean/surface-based-observations/wave-buoys`
-- **Data Policy**: Core data following WMO Unified Data Policy
-- **Retention**: 30 days (P30D)
-- **Contact**: Integrated Marine Observing System (IMOS)
-
 ### Data Mappings
 
 Data mappings define how incoming data is processed and converted to WIS 2.0 formats, particularly BUFR (Binary Universal Form for the Representation of meteorological data).
