@@ -7,9 +7,8 @@ This section documents the metadata management implementation for AODN's wis2box
 wis2box-data/
 ├── metadata/
 │   ├── discovery/          # Discovery metadata (MCF YAML files)
-│   │   ├── wave-buoys.yml  # Apollo Bay wave buoy metadata
-│   │   └── wave-buoy-storm-bay.yml   # Storm Bay wave buoy metadata
-│   └── station/           # Station metadata
+│   │   └── wave-buoys.yml  # wave buoy metadata
+│   └── station/           # Station metadata   
 │       └── station_list.csv # Station information registry
 ├── mappings/              # Data format mappings
 │   ├── wave_buoy_template.json          # BUFR template for wave data
