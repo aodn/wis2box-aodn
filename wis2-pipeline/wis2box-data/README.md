@@ -7,9 +7,8 @@ This section documents the metadata management implementation for AODN's wis2box
 wis2box-data/
 ├── metadata/
 │   ├── discovery/          # Discovery metadata (MCF YAML files)
-│   │   ├── wave-buoy-apollo-bay.yml  # Apollo Bay wave buoy metadata
-│   │   └── wave-buoy-storm-bay.yml   # Storm Bay wave buoy metadata
-│   └── station/           # Station metadata
+│   │   └── wave-buoys.yml  # wave buoy metadata
+│   └── station/           # Station metadata   
 │       └── station_list.csv # Station information registry
 ├── mappings/              # Data format mappings
 │   ├── wave_buoy_template.json          # BUFR template for wave data
@@ -68,17 +67,17 @@ Each discovery metadata file contains:
 
 #### Wave Buoy Datasets
 
-##### Apollo Bay Wave Buoy (`wave-buoy-apollo-bay.yml`)
+##### Apollo Bay Wave Buoy (`wave-buoys.yml`)
 
 ```yaml
 wis2box:
     retention: P30D
-    topic_hierarchy: au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys
+    topic_hierarchy: au-imos/data/core/ocean/surface-based-observations/wave-buoys
     country: AUS
-    centre_id: au-bom-imos
+    centre_id: au-imos
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
+    identifier: urn:wmo:md:au-imos:wave-buoys
     hierarchylevel: dataset
 
 identification:
@@ -93,20 +92,6 @@ identification:
               end: null
               resolution: PT30M
 ```
-
-##### Storm Bay Wave Buoy (`wave-buoy-storm-bay.yml`)
-
-Similar structure with different spatial extents:
-- Bounding box: [147.44728,-43.19308,147.44785,-43.1926]
-- Start date: 2025-07-15
-- Same 30-minute temporal resolution
-
-#### Key Configuration Elements
-
-- **Topic Hierarchy**: `au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys`
-- **Data Policy**: Core data following WMO Unified Data Policy
-- **Retention**: 30 days (P30D)
-- **Contact**: Integrated Marine Observing System (IMOS)
 
 ### Data Mappings
 
@@ -161,7 +146,7 @@ This implementation is specifically configured for AODN's requirements:
 - **Data Source**: Coastal wave buoys providing near real-time observations
 - **Geographic Focus**: Australian coastal waters
 - **Data Access**: Integration with THREDDS data server
-- **Centre ID**: `au-bom-imos` following WMO centre identification
+- **Centre ID**: `au-imos` following WMO centre identification
 
 ### Managing Metadata
 
