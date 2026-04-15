@@ -1,3 +1,14 @@
+---
+name: create-gh-issue
+description: >
+  Use when creating, filing, or logging a GitHub issue in aodn/backlog.
+  Handles user stories, feature requests, enhancements, tasks, bugs, epics,
+  and technical debt items. Automatically formats the title with the correct
+  prefix and T-level tags, populates every section of the AODN body template,
+  applies appropriate labels, and adds the new issue to the AODN Pipeline
+  Uplift Team project board (#72).
+---
+
 # Create Issue
 
 Create a GitHub issue for the AODN Pipeline Uplift Team project following the appropriate template.
