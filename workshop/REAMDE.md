@@ -69,15 +69,23 @@ au-imos/data/core/ocean/surface-based-observations/wave-buoys
 ### How it is used
 
 - **MQTT topics:** Notifications are published to broker topics derived from this hierarchy.
-- **Discovery metadata:** The topic hierarchy links datasets to WIS 2.0 catalogues.
+- **Discovery metadata:** The topic hierarchy links datasets to [WIS 2.0 catalogues](https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata/items).
 - **Data storage:** MinIO bucket paths mirror the hierarchy for incoming/published data.
 
 > See `wis2-pipeline/wis2box-data/metadata/discovery/wave-buoys.yml` → `wis2box.topic_hierarchy`
 
 ---
 
-## Slide 3 — BUFR Data Format
+## Slide 3 — Data Formats
 
+### TODO: Wave Buoy Observation Data Format -- NetCDF
+Source data files: [IMOS Coastal Wave Bouys](https://thredds5.production.aodn.org.au/thredds/catalog/IMOS/COASTAL-WAVE-BUOYS/WAVE-BUOYS/REALTIME/WAVE-PARAMETERS/catalog.html)
+
+Source data format: NetCDF4 (.nc)   
+
+
+### Bufr format
+Target data format: [BUFR](https://community.wmo.int/en/activity-areas/wis/bufr)
 **BUFR** (Binary Universal Form for the Representation of meteorological data) is the WMO standard binary format for exchanging observational data.
 
 ### Why BUFR?
