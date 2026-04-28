@@ -22,7 +22,7 @@ graph LR
     Cache -->|Discovery| Consumers[Data Consumers]
 ```
 
-### 2.2 Publication of WIS2 Stations with WIGOS ID
+### 2.2 Publication Flow of WIS2 Stations with WIGOS ID
 
 ```mermaid
 flowchart LR
@@ -33,4 +33,36 @@ flowchart LR
     D -->|Validate IDs| C
     D -->|Create/modify the station table| E[WIS2box-AODN Repo]
     E -->|Push to WIS2box Management Service| F[Publish to IMOS WIS2 Node]
+```
+
+### 2.3 Publish Discovery Metadata via wis2box-management Service
+
+This method publishes discovery metadata using a geo-YAML (MCF format) file, keeping the metadata in a persistent way.
+
+#### Mapping IMOS Netcdf into WIS2 BUFR Format
+
+
+#### Discovery Metadata (MCF geo-metadata format)
+
+The discovery metadata YAML file defines the dataset collection and is stored in:
+`wis2-pipeline/wis2box-data/metadata/discovery/wave-buoys.yml`
+
+Key sections of the MCF file:
+- **wis2box** — retention policy, topic hierarchy, data mappings (csv2bufr, bufr2geojson plugins)
+- **mcf** — MCF schema version
+- **metadata** — unique identifier (`urn:wmo:md:au-imos:wave-buoys`) and hierarchy level
+- **identification** — title, abstract, keywords, spatial/temporal extents, WMO data policy
+- **contact** — host organisation details (IMOS)
+
+#### Publishing Workflow
+
+```mermaid
+flowchart TD
+    A[Create discovery metadata\nYAML file in MCF format] --> B[Login to wis2box-management service]
+    B --> C[Add dataset collection]
+    C --> D[Publish discovery metadata]
+    D --> E{Manage metadata}
+    E -->|Update| D
+    E -->|Republish all| F[Republish all discovery metadata]
+    E -->|Remove| G[Unpublish discovery metadata]
 ```
