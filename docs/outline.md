@@ -58,15 +58,13 @@ flowchart LR
         BUFR[BUFR4 Message]
     end
     subgraph Publish["WIS2 Distribution"]
-        GEO[bufr2geojson]
         WIS[WIS2 Node\nMQTT Notification]
     end
 
     NC -->|Extract variables| CSV
     CSV --> MAP
     MAP -->|Encode| BUFR
-    BUFR --> GEO
-    GEO --> WIS
+    BUFR --> WIS
 ```
 
 ##### Source NetCDF Variables
@@ -125,3 +123,6 @@ flowchart TD
     E -->|Republish all| F[Republish all discovery metadata]
     E -->|Remove| G[Unpublish discovery metadata]
 ```
+
+### 2.4 Publish Wave Buoy data to WIS2
+
