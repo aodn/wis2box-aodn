@@ -334,3 +334,13 @@ wis2box data ingest \
    ```
 
 4. **Webapp** — Open the [Monitoring page](https://wis2box.edge.aodn.org.au/wis2box-webapp/monitoring) to see data notification counts.
+
+5. **MQTT Subscribed Message** 
+   The wis2box should publish a message to the MQTT broker that looks like this:
+   ```
+   origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys-workshop
+   ```
+   The message should contain a `links[].href` pointing to the BUFR file in the public bucket. Save this message to a file, for example:
+   ```bash
+   uv run resources/mqtt/sub_mqtt.py --host wis2box-broker.edge.aodn.org.au --port 1883 --username wis2box --password <secret> --no-tls
+   ```  
