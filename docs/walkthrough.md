@@ -325,8 +325,7 @@ wis2box data ingest \
 
 2. **API** — Query for published observations:
    ```bash
-   curl -s https://wis2box.edge.aodn.org.au/oapi/collections/urn:wmo:md:au-imos:wave-buoys/items?limit=5 \
-       | python3 -m json.tool
+   curl -s "https://wis2box.edge.aodn.org.au/oapi/collections/messages/items?datetime=2026-04-30/2026-05-01&limit=10" | python3 -m json.tool
    ```
 
 3. **MinIO** — Confirm the BUFR file exists in the public bucket:
