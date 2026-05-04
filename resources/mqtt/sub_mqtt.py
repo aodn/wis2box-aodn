@@ -3,25 +3,25 @@
 Subscribe to WIS2 notifications from the WMO Global Broker (or any MQTT broker).
 
 Usage:
-    pip install paho-mqtt
-    python3 sub_mqtt.py [OPTIONS]
+    uv add paho-mqtt
+    uv run resources/mqtt/sub_mqtt.py [OPTIONS]
 
 Examples:
     # Use defaults (WMO Global Broker, IMOS wave buoys topic)
-    python3 sub_mqtt.py
+    uv run resources/mqtt/sub_mqtt.py
 
-    # Connect to IMOS edge broker (no TLS, port 1883)
-    python3 sub_mqtt.py --host wis2box-broker.edge.aodn.org.au --port 1883 \\
+    # Connect to IMOS production broker (no TLS, port 1883)
+    uv run resources/mqtt/sub_mqtt.py --host wis2box-broker.production.aodn.org.au --port 1883 \
         --username wis2box --password <secret> --no-tls
 
     # Subscribe to all IMOS topics
-    python3 sub_mqtt.py --topic "origin/a/wis2/au-imos/#"
+    uv run resources/mqtt/sub_mqtt.py --topic "origin/a/wis2/au-imos/#"
 
     # Subscribe to all WIS2 topics worldwide
-    python3 sub_mqtt.py --topic "origin/a/wis2/#"
+    uv run resources/mqtt/sub_mqtt.py --topic "origin/a/wis2/#"
 
     # Custom output directory
-    python3 sub_mqtt.py --output-dir /tmp/mqtt_messages
+    uv run resources/mqtt/sub_mqtt.py --output-dir /tmp/mqtt_messages
 
 Messages are saved to --output-dir as JSON files named:
     <wigos_station_identifier>-<datetime>.json
