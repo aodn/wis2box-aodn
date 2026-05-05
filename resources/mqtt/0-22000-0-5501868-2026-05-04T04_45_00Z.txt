@@ -1,0 +1,182 @@
+WIS2 MQTT Notification – BUFR Decode Report
+======================================================================
+  Source file             : 0-22000-0-5501868-2026-05-04T04_45_00Z.json
+  Canonical URL           : https://wis2box.production.aodn.org.au/data/2026-05-04/wis/urn:wmo:md:au-imos:wave-buoys/WIGOS_0-22000-0-5501868_20260504T044500.bufr4
+  Downloaded BUFR         : 0-22000-0-5501868-2026-05-04T04_45_00Z.bufr4
+  Data ID                 : au-imos:wave-buoys/WIGOS_0-22000-0-5501868_20260504T044500
+  Observation datetime    : 2026-05-04T04:45:00Z
+  Published at            : 2026-05-04T05:32:52Z
+  WIGOS station ID        : 0-22000-0-5501868
+  BUFR size               : 122 bytes
+
+======================================================================
+SECTION 0 – Indicator Section
+======================================================================
+  Edition number          : 4
+  Total message length    : 122 bytes
+
+======================================================================
+SECTION 1 – Identification Section
+======================================================================
+  Section 1 length              : 22 bytes
+  Master table number           : 0
+  Originating centre            : 1
+  Originating sub-centre        : 65535
+  Update sequence number        : 0
+  Data category                 : 0
+  International data sub-cat.   : 6
+  Local data sub-category       : 110
+  Master tables version         : 41
+  Local tables version          : 0
+  Typical date/time (Y-M-D h:m:s): 2026-05-04 04:45:00
+
+======================================================================
+SECTION 2 – Optional Local Use Section
+======================================================================
+  Present                       : No
+
+======================================================================
+SECTION 3 – Data Description Section
+======================================================================
+  Section 3 length              : 9 bytes
+  Number of subsets             : 1
+  Observed data flag            : 1
+  Compressed data flag          : 0
+  Unexpanded descriptors (1)    : [np.int64(308015)]
+
+  Expanded descriptor sequence (61 entries):
+    #     F XX YYY    Abbreviation                                             Unit
+    ----  ----------  -------------------------------------------------------  --------------------
+    0     0 01 003    regionNumber                                             CODE TABLE
+    1     0 01 020    wmoRegionSubArea                                         Numeric
+    2     0 01 005    buoyOrPlatformIdentifier                                 Numeric
+    3     0 01 011    shipOrMobileLandStationIdentifier                        CCITT IA5
+    4     0 01 007    satelliteIdentifier                                      CODE TABLE
+    5     0 01 001    blockNumber                                              Numeric
+    6     0 01 002    stationNumber                                            Numeric
+    7     0 02 044    indicatorForMethodOfCalculatingSpectralWaveData          CODE TABLE
+    8     0 02 045    platformType                                             CODE TABLE
+    9     0 04 001    year                                                     a
+    10    0 04 002    month                                                    mon
+    11    0 04 003    day                                                      d
+    12    0 04 004    hour                                                     h
+    13    0 04 005    minute                                                   min
+    14    0 05 001    latitude                                                 deg
+    15    0 06 001    longitude                                                deg
+    16    0 22 063    totalWaterDepth                                          m
+    17    0 22 076    directionFromWhichDominantWavesAreComing                 deg
+    18    0 22 077    directionalSpreadOfDominantWave                          deg
+    19    0 22 094    totalNumberOfWaveBands                                   Numeric
+    20    0 25 043    waveSamplingIntervalTime                                 s
+    21    0 22 078    durationOfWaveRecord                                     s
+    22    0 02 046    waveMeasurementInstrumentation                           CODE TABLE
+    23    0 22 070    significantWaveHeight                                    m
+    24    0 22 071    spectralPeakWavePeriod                                   s
+    25    0 22 073    maximumWaveHeight                                        m
+    26    0 22 074    averageWavePeriod                                        s
+    27    0 02 046    waveMeasurementInstrumentation                           CODE TABLE
+    28    0 22 070    significantWaveHeight                                    m
+    29    0 22 071    spectralPeakWavePeriod                                   s
+    30    0 22 073    maximumWaveHeight                                        m
+    31    0 22 074    averageWavePeriod                                        s
+    32    1 63 000    127000                                                   127000
+    33    0 31 001    delayedDescriptorReplicationFactor                       Numeric
+    34    0 02 046    waveMeasurementInstrumentation                           CODE TABLE
+    35    0 08 090    decimalScaleOfFollowingSignificands                      Numeric
+    36    0 22 102    scaledMaximumNonDirectionalSpectralWaveDensityByFrequency  m2 s
+    37    0 08 090    decimalScaleOfFollowingSignificands                      Numeric
+    38    0 22 084    bandContainingMaximumNonDirectionalSpectralWaveDensity   Numeric
+    39    1 56 000    120000                                                   120000
+    40    0 31 001    delayedDescriptorReplicationFactor                       Numeric
+    41    0 22 080    wavebandCentralFrequency                                 Hz
+    42    0 22 108    spectralWaveDensityRatio                                 %
+    43    0 22 086    meanDirectionFromWhichWavesAreComing                     deg
+    44    0 22 087    principalDirectionFromWhichWavesAreComing                deg
+    45    0 22 088    firstNormalizedPolarCoordinateFromFourierCoefficients    Numeric
+    46    0 22 089    secondNormalizedPolarCoordinateFromFourierCoefficients   Numeric
+    47    1 41 000    105000                                                   105000
+    48    0 31 001    delayedDescriptorReplicationFactor                       Numeric
+    49    0 08 090    decimalScaleOfFollowingSignificands                      Numeric
+    50    0 22 104    scaledNonDirectionalSpectralWaveDensityByFrequency       m2 s
+    51    0 08 090    decimalScaleOfFollowingSignificands                      Numeric
+    52    0 22 186    directionFromWhichWavesAreComing                         deg
+    53    0 22 187    directionalSpreadOfWaves                                 deg
+    54    1 41 000    105000                                                   105000
+    55    0 31 001    delayedDescriptorReplicationFactor                       Numeric
+    56    0 08 090    decimalScaleOfFollowingSignificands                      Numeric
+    57    0 22 106    scaledDirectionalSpectralWaveDensityByFrequency          m2 rad-1 s
+    58    0 08 090    decimalScaleOfFollowingSignificands                      Numeric
+    59    0 22 186    directionFromWhichWavesAreComing                         deg
+    60    0 22 187    directionalSpreadOfWaves                                 deg
+
+======================================================================
+SECTION 4 – Data Section
+======================================================================
+  Section 4 length              : 79 bytes
+
+  Data values (from unpacked BUFR):
+    Key                                                                Value                 Unit
+    -----------------------------------------------------------------  --------------------  ------------------------------
+    regionNumber                                                       0                     CODE TABLE
+    wmoRegionSubArea                                                   1                     Numeric
+    buoyOrPlatformIdentifier                                           1868                  Numeric
+    shipOrMobileLandStationIdentifier                                                        CCITT IA5
+    satelliteIdentifier                                                MISSING               CODE TABLE
+    blockNumber                                                        MISSING               Numeric
+    stationNumber                                                      MISSING               Numeric
+    indicatorForMethodOfCalculatingSpectralWaveData                    MISSING               CODE TABLE
+    platformType                                                       MISSING               CODE TABLE
+    year                                                               2026                  a
+    month                                                              5                     mon
+    day                                                                4                     d
+    hour                                                               4                     h
+    minute                                                             45                    min
+    latitude                                                           -38.3617              deg
+    longitude                                                          141.275               deg
+    totalWaterDepth                                                    MISSING               m
+    directionFromWhichDominantWavesAreComing                           213                   deg
+    directionalSpreadOfDominantWave                                    39                    deg
+    totalNumberOfWaveBands                                             MISSING               Numeric
+    waveSamplingIntervalTime                                           MISSING               s
+    durationOfWaveRecord                                               MISSING               s
+    #1#waveMeasurementInstrumentation                                  MISSING               CODE TABLE
+    #1#significantWaveHeight                                           3.04                  m
+    #1#spectralPeakWavePeriod                                          12.8                  s
+    #1#maximumWaveHeight                                               MISSING               m
+    #1#averageWavePeriod                                               7                     s
+    #2#waveMeasurementInstrumentation                                  MISSING               CODE TABLE
+    #2#significantWaveHeight                                           MISSING               m
+    #2#spectralPeakWavePeriod                                          MISSING               s
+    #2#maximumWaveHeight                                               MISSING               m
+    #2#averageWavePeriod                                               MISSING               s
+    #1#delayedDescriptorReplicationFactor                              1                     Numeric
+    #3#waveMeasurementInstrumentation                                  MISSING               CODE TABLE
+    #1#decimalScaleOfFollowingSignificands                             MISSING               Numeric
+    scaledMaximumNonDirectionalSpectralWaveDensityByFrequency          MISSING               m2 s
+    #2#decimalScaleOfFollowingSignificands                             MISSING               Numeric
+    bandContainingMaximumNonDirectionalSpectralWaveDensity             MISSING               Numeric
+    #2#delayedDescriptorReplicationFactor                              1                     Numeric
+    wavebandCentralFrequency                                           MISSING               Hz
+    spectralWaveDensityRatio                                           MISSING               %
+    meanDirectionFromWhichWavesAreComing                               247                   deg
+    principalDirectionFromWhichWavesAreComing                          MISSING               deg
+    firstNormalizedPolarCoordinateFromFourierCoefficients              MISSING               Numeric
+    secondNormalizedPolarCoordinateFromFourierCoefficients             MISSING               Numeric
+    #3#delayedDescriptorReplicationFactor                              1                     Numeric
+    #3#decimalScaleOfFollowingSignificands                             MISSING               Numeric
+    scaledNonDirectionalSpectralWaveDensityByFrequency                 MISSING               m2 s
+    #4#decimalScaleOfFollowingSignificands                             MISSING               Numeric
+    #1#directionFromWhichWavesAreComing                                MISSING               deg
+    #1#directionalSpreadOfWaves                                        45                    deg
+    #4#delayedDescriptorReplicationFactor                              1                     Numeric
+    #5#decimalScaleOfFollowingSignificands                             MISSING               Numeric
+    scaledDirectionalSpectralWaveDensityByFrequency                    MISSING               m2 rad-1 s
+    #6#decimalScaleOfFollowingSignificands                             MISSING               Numeric
+    #2#directionFromWhichWavesAreComing                                MISSING               deg
+    #2#directionalSpreadOfWaves                                        MISSING               deg
+
+======================================================================
+SECTION 5 – End Section
+======================================================================
+  End marker (7777)             : 7777
+  Section 5 length              : 4 bytes
