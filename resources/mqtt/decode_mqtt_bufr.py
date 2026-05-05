@@ -11,9 +11,9 @@ All BUFR sections (0-5) are decoded and written to the output file.
 
 import argparse
 import base64
+from collections import Counter
 import json
 import os
-import re
 import sys
 import tempfile
 from typing import Any
@@ -169,17 +169,18 @@ def decode_section4(handle: int) -> list[str]:
     # Build unit lookup keyed by base abbreviation.
     raw_abbrevs = _get_array(handle, "expandedAbbreviations")
     raw_units   = _get_array(handle, "expandedUnits")
-    unit_by_abbrev: dict[str, str] = {
-        str(a): u
-        for a, u in zip(raw_abbrevs, raw_units)
-        if a and not str(a).isdigit()
-    }
+    data_keys = [str(a) for a in raw_abbrevs if a and not str(a).isdigit()]
+    key_counts = Counter(data_keys)
+    unit_by_abbrev: dict[str, str] = {}
+    for abbr, unit in zip(raw_abbrevs, raw_units):
+        key = str(abbr)
+        if key in key_counts and key not in unit_by_abbrev:
+            unit_by_abbrev[key] = unit
     data_abbrevs = set(unit_by_abbrev)
 
     # Use the key iterator for correct enumeration order.  The iterator
-    # returns plain key names (no #N# prefix) for EVERY occurrence, so we
-    # must still track seen_keys ourselves to build the correct #N# key
-    # that eccodes uses for codes_get on repeated descriptors.
+    # returns plain key names for every occurrence, while ecCodes addresses
+    # repeated descriptors as #1#key, #2#key, ... including the first value.
     seen_keys: dict[str, int] = {}
     it = eccodes.codes_keys_iterator_new(handle)
     try:
@@ -189,7 +190,7 @@ def decode_section4(handle: int) -> list[str]:
                 continue
             count = seen_keys.get(base, 0)
             seen_keys[base] = count + 1
-            eccodes_key = base if count == 0 else f"#{count + 1}#{base}"
+            eccodes_key = f"#{count + 1}#{base}" if key_counts[base] > 1 else base
             unit = unit_by_abbrev.get(base, "")
             try:
                 raw = eccodes.codes_get(handle, eccodes_key)
