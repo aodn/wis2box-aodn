@@ -4,7 +4,7 @@ description: >
   Use when creating, filing, or logging a GitHub issue in aodn/backlog.
   Handles user stories, feature requests, enhancements, tasks, bugs, epics,
   and technical debt items. Automatically formats the title with the correct
-  prefix and T-level tags, populates every section of the AODN body template,
+  prefix and type tags, populates every section of the AODN body template,
   applies appropriate labels, and adds the new issue to the AODN Pipeline
   Uplift Team project board (#72).
 ---
@@ -41,17 +41,16 @@ When the user describes an issue, determine the type, format the title correctly
 Titles follow this structure:
 
 ```
-<prefix> <Short description> <[T-level tags]> <[type tag]>
+<prefix> <Short description> <[type tag]>
 ```
 
-- **T-level tags** categorise the work area, e.g. `[T3 - ARDC Waves]`, `[T3 - Reef Network]`, `[T1 - IMOS, T2 - O&M - Continuous Improvement]`
 - **Type tags**: `[epic]`, `[bug]`, `[technical debt]`, `[DEVOPS, general backlog]`
 - Story points are set via **labels only** (not in the title)
 
 ### Examples
 
 ```
-AS A wave data user I WANT NRT buoy data gaps filled SO THAT my analysis is complete [T3 - ARDC Waves]
+AS A wave data user I WANT NRT buoy data gaps filled SO THAT my analysis is complete
 ✨WIS2.0 Prefect Flow
 📋(TASK) Apply mask into GSLA particle PNG generation
 Test implementation of WIS2.0 Wave Buoys Collection [epic]
