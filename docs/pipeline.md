@@ -1,7 +1,7 @@
-# IMOS WIS2.0
+# IMOS WIS2.0 Data Pipeline
 ## Overview
 
-This project contains the Prefect flow for processing IMOS buoy data for the WMO Information System 2.0 (WIS2). The `wis2_buoys_upstream_flow` is designed to be triggered by new NetCDF files arriving in an S3 bucket. It converts these files into CSV format and uploads them to a MinIO bucket, which acts as an incoming directory for a wis2box instance. 
+This project contains the Prefect flow for processing IMOS buoy data for the WMO Information System 2.0 (WIS2). The `wis2_buoys_upstream_flow` is designed to be triggered by new NetCDF files arriving in an S3 bucket. The upstream flow is orchestrated by the [dataflow-orchestration repository](https://github.com/aodn/dataflow-orchestration/tree/main/projects/wis2). It converts these files into CSV format and uploads them to a MinIO bucket, which acts as an incoming directory for a wis2box instance. The wis2box will then convert the CSV data that arrived in the `wis2box-incoming` MinIO bucket into BUFR format and publish it to the WMO Global Broker.
 
 ## Workflows
 ```mermaid
