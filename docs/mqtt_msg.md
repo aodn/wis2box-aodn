@@ -6,42 +6,46 @@ This document explains the structure and fields of the notification messages (Ge
 
 ```json
 {
-  "id": "f6ef8700-5e0a-4e52-8abf-e15e647a7f54",
+  "id": "a2e4ef00-f179-41a7-9b76-1e7eda002637",
   "type": "Feature",
   "conformsTo": [
     "http://wis.wmo.int/spec/wnm/1/conf/core"
   ],
   "geometry": {
-    "coordinates": [141.27452, -38.36218],
+    "coordinates": [
+      143.72265,
+      -38.75337
+    ],
     "type": "Point"
   },
   "properties": {
-    "data_id": "au-imos:wave-buoys/WIGOS_0-22000-0-5501868_20260501T024500",
-    "datetime": "2026-05-01T02:45:00Z",
-    "pubtime": "2026-05-01T03:32:51Z",
+    "data_id": "au-imos:wave-buoys/WIGOS_0-22000-0-7811080_20260507T000000",
+    "datetime": "2026-05-07T00:00:00Z",
+    "pubtime": "2026-05-07T00:32:44Z",
     "integrity": {
       "method": "sha512",
-      "value": "Fb0+dCiRJGh2cfSeOBc9g8Tx6q3Gz3cOS6KCBf7MP9x91Y5UnzLJjiMmUauZh3riSLZrtR5TL8Rlb98I51WHJQ=="
+      "value": "qOFmMSz7+jL1YziF17BBsbqJ4h3qMVIZD8jqPtscWomQGAiGwraxyyQxCLRgzTa/7vkXEBKk07PAoWX0iUySUA=="
     },
     "metadata_id": "urn:wmo:md:au-imos:wave-buoys",
     "content": {
       "encoding": "base64",
-      "value": "QlVGUgAAegQAABYAAGL//wAAAAZuKQAH6gUBAi0AAAAJAAABgMgPAABPAAIHTP/////////////////v1KCK0nZYM9Rzuf/7kCf/////+DtSX/8x////////gP//////wH//7q///+A//////8RAP///////4Dc3Nzc=",
+      "value": "QlVGUgAAegQAABYAAAH//wAAAAZuKQAH6gUHAAAAAAAJAAABgMgPAABPACIrSP/////////////////v1KOAAnGRu9vsU//68Dn/////+ElQH/8lf///////gP//////wH//7A///+A//////8RAP///////4Dc3Nzc=",
       "size": 122
     },
-    "wigos_station_identifier": "0-22000-0-5501868"
+    "wigos_station_identifier": "0-22000-0-7811080",
+    "id": "a2e4ef00-f179-41a7-9b76-1e7eda002637"
   },
   "links": [
     {
       "rel": "canonical",
       "type": "application/bufr",
-      "href": "https://wis2box.production.aodn.org.au/data/2026-05-01/wis/urn:wmo:md:au-imos:wave-buoys/WIGOS_0-22000-0-5501868_20260501T024500.bufr4",
+      "href": "https://wis2box.production.aodn.org.au/data/2026-05-07/wis/urn:wmo:md:au-imos:wave-buoys/WIGOS_0-22000-0-7811080_20260507T000000.bufr4",
       "length": 122
     },
     {
       "rel": "via",
       "type": "text/html",
-      "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-22000-0-5501868"
+      "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-22000-0-7811080"
     }
   ],
   "generated_by": "wis2box 1.0.0"
