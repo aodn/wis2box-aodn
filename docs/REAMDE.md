@@ -1,474 +1,129 @@
-# WIS 2.0 & wis2box Workshop — AODN Staff
+# IMOS WIS 2.0 Node — System Overview
 
-> **System under discussion:** `wis2box-aodn` — IMOS wave buoy observations published via the `au-imos` centre.
+The **Integrated Marine Observing System (IMOS)**, operated by the Australian Ocean Data Network (AODN), maintains a [WMO Information System 2.0 (WIS 2.0)](https://community.wmo.int/en/activity-areas/wis) node that publishes Australian coastal wave buoy observations to the global meteorological community.
 
----
-
-## Slide 1 — Why WIS 2.0?
-
-The World Meteorological Organization (WMO) Information System 2.0 (WIS 2.0) replaces the legacy GTS (Global Telecommunication System) with a modern, web-friendly architecture for sharing weather, climate, and ocean data.
-
-### Key design goals
-
-| Goal | How WIS 2.0 achieves it |
-|------|------------------------|
-| **Open standards** | HTTP/HTTPS, MQTT, OGC APIs |
-| **Pub/sub messaging** | Real-time notifications via MQTT brokers |
-| **Machine-readable metadata** | WCMP2 discovery metadata (ISO 19115 profile) |
-| **Decentralised** | Each centre runs its own WIS 2.0 node; Global Services aggregate |
-
-### Architecture at a glance
-
-```
-Data Producer ──► WIS 2.0 Node ──► Global Broker ──► Global Cache / Discovery
-  (au-imos)        (wis2box)        (WMO)              (WMO)
-```
-
-**Key takeaway:** IMOS operates as a **data producer**. Our `wis2box-aodn` deployment is the WIS 2.0 Node that publishes wave buoy observations to the WMO network.
-
-### References
-
-- [WIS 2.0 Technical Regulations](https://community.wmo.int/en/activity-areas/wis)
-- [WMO Unified Data Policy (Resolution 1, Cg-Ext 2021)](https://ane4bf-datap1.s3-eu-west-1.amazonaws.com/wmocms/s3fs-public/ckeditor/files/Cg-Ext2021-d04-1-WMO-UNIFIED-POLICY-FOR-THE-INTERNATIONAL-approved_en.pdf)
+This node is registered with the WMO under centre ID **`au-imos`** and distributes data openly under the [WMO Unified Data Policy](https://community.wmo.int/en/unified-data-policy) (`core` tier — free and unrestricted access).
 
 ---
 
-## Slide 2 — Topic Hierarchy
+## Architecture Overview
 
-WIS 2.0 organises data using a **topic hierarchy** — a structured path that identifies who publishes what kind of data.
+```mermaid
+flowchart TD
+    subgraph IMOS["IMOS / AODN"]
+        S3["IMOS S3 Bucket\nNetCDF wave buoy files"]
+        Lambda["AWS Lambda\nS3 event trigger"]
+        Prefect["Prefect Flow\ndataflow-orchestration"]
+        MinIO["MinIO — wis2box-incoming\nCSV observation files"]
+        WIS2["wis2box (ECS Fargate)\nBUFR conversion + publication"]
+        MQTT["Mosquitto MQTT Broker\nwis2box-broker.production.aodn.org.au:1883"]
+        API["pygeoAPI / OGC API\nwis2box.production.aodn.org.au/oapi"]
+    end
 
-### Format
+    subgraph WMO["WMO Global Services"]
+        GB["Global Broker\nglobalbroker.meteo.fr"]
+        GC["Global Cache"]
+        GDC["Global Discovery Catalogue"]
+    end
 
+    S3 -->|S3 event| Lambda
+    Lambda -->|webhook| Prefect
+    Prefect -->|NetCDF → CSV| MinIO
+    MinIO -->|MQTT trigger| WIS2
+    WIS2 -->|BUFR + WNM| MQTT
+    MQTT -->|subscribe| GB
+    GB --> GC & GDC
 ```
-{centre_id}/data/{data_policy}/{earth_system_discipline}/{observation_type}/{dataset_name}
-```
-
-### AODN example
-
-```
-au-imos/data/core/ocean/surface-based-observations/wave-buoys
-│        │    │    │     │                           │
-│        │    │    │     │                           └─ Dataset name
-│        │    │    │     └─ Observation type
-│        │    │    └─ Earth system discipline
-│        │    └─ WMO data policy (core = free & open)
-│        └─ Literal "data"
-└─ Centre ID registered with WMO
-```
-
-### Breakdown
-
-| Segment | Value | Meaning |
-|---------|-------|---------|
-| Centre ID | `au-imos` | Integrated Marine Observing System, Australia |
-| Data policy | `core` | Freely available under WMO Unified Data Policy |
-| Discipline | `ocean` | Earth system discipline |
-| Observation type | `surface-based-observations` | In-situ surface instruments |
-| Dataset | `wave-buoys` | Coastal wave buoy measurements |
-
-### How it is used
-
-- **MQTT topics:** Notifications are published to broker topics derived from this hierarchy.
-- **Discovery metadata:** The topic hierarchy links datasets to [WIS 2.0 catalogues](https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata/items).
-- **Data storage:** MinIO bucket paths mirror the hierarchy for incoming/published data.
-
-> See `wis2-pipeline/wis2box-data/metadata/discovery/wave-buoys.yml` → `wis2box.topic_hierarchy`
 
 ---
 
-## Slide 3 — Data Formats
+## Live Services
 
-### TODO: Wave Buoy Observation Data Format -- NetCDF
-Source data files: [IMOS Coastal Wave Bouys](https://thredds5.production.aodn.org.au/thredds/catalog/IMOS/COASTAL-WAVE-BUOYS/WAVE-BUOYS/REALTIME/WAVE-PARAMETERS/catalog.html)
+| Service | URL | Description |
+|---|---|---|
+| **WIS2 Webapp** | https://wis2box.production.aodn.org.au/wis2box-webapp/ | Admin interface — monitoring, station and dataset management |
+| **OGC API (pygeoAPI)** | https://wis2box.production.aodn.org.au/oapi | Machine-readable access to stations, notifications, and observations |
+| **MQTT Broker** | `mqtt://wis2box-broker.production.aodn.org.au:1883` | Real-time WIS2 notification stream (username: `everyone`, password: `everyone`) |
+| **MinIO Console** | Internal (ECS) | S3-compatible object storage for incoming and published data |
 
-Source data format: NetCDF4 (.nc)   
-
-
-### Bufr format
-Target data format: [BUFR](https://community.wmo.int/en/activity-areas/wis/bufr)
-**BUFR** (Binary Universal Form for the Representation of meteorological data) is the WMO standard binary format for exchanging observational data.
-
-### Why BUFR?
-
-| Property | Benefit |
-|----------|---------|
-| Compact binary encoding | Efficient for transmission and storage |
-| Self-describing | Each message carries its own table references |
-| Internationally standardised | Interoperable across all WMO member states |
-| Supports quality flags | Built-in metadata for data quality |
-
-### BUFR message structure
-
-```
-┌──────────────────────┐
-│  Section 0: Indicator │  ← "BUFR" magic bytes
-│  Section 1: Header    │  ← Data category, centre, timestamp
-│  Section 3: Descriptors│ ← What parameters are encoded
-│  Section 4: Data      │  ← Actual observation values
-│  Section 5: End       │  ← "7777" end marker
-└──────────────────────┘
-```
-
-### csv2bufr — converting CSV to BUFR
-
-wis2box uses the `csv2bufr` library to transform tabular CSV data into BUFR messages. The conversion is driven by a **JSON template** that maps CSV columns to BUFR descriptors.
-
-#### AODN wave buoy template
-
-Location: `wis2-pipeline/wis2box-data/mappings/wave_buoy_template.json`
-
-Uses BUFR descriptor **3 08 015** (ocean wave spectral observations):
-
-| CSV Column | BUFR Key | Parameter |
-|-----------|----------|-----------|
-| `SSWMD` | `meanDirectionFromWhichWavesAreComing` | Mean wave direction (°) |
-| `WMDS` | `directionalSpreadOfWaves` | Directional spread (°) |
-| `WPDI` | `directionFromWhichDominantWavesAreComing` | Peak wave direction (°) |
-| `WPDS` | `directionalSpreadOfDominantWave` | Peak directional spread (°) |
-| `WPFM` | `averageWavePeriod` | Mean wave period (s) |
-| `WPPE` | `spectralPeakWavePeriod` | Peak wave period (s) |
-| `WSSH` | `significantWaveHeight` | Significant wave height (m) |
-
-### Data processing pipeline
-
-```
-CSV file  ──►  csv2bufr (template)  ──►  BUFR4 message  ──►  bufr2geojson  ──►  GeoJSON (API)
-                                               │
-                                               └──► Published via MQTT notification
-```
-
-> **Hands-on:** Inspect the template at `wis2-pipeline/wis2box-data/mappings/wave_buoy_template.json`
 
 ---
 
-## Slide 4 — wis2box Reference Implementation
+## Data
 
-**wis2box** is the WMO's official open-source reference implementation for running a WIS 2.0 Node. It provides a complete, containerised stack for data ingest, conversion, publication, and discovery.
+**Dataset:** Coastal wave buoy observations  
+**Stations:** 23 moored wave buoys around the Australian coast  
+**Topic hierarchy:** `au-imos/data/core/ocean/surface-based-observations/wave-buoys`  
+**Format:** NetCDF → CSV → BUFR4 → GeoJSON  
+**Observation interval:** 60 minutes  
+**Retention:** 30 days on the WIS2 node  
 
-### Component architecture
+Measured parameters (BUFR descriptor 308015):
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        wis2box stack                        │
-│                                                             │
-│  ┌──────────┐  ┌──────────────┐  ┌────────────────────────┐ │
-│  │  nginx   │  │  wis2box-ui  │  │  wis2box-webapp        │ │
-│  │  (proxy) │  │  (map view)  │  │  (admin interface)     │ │
-│  └────┬─────┘  └──────┬───────┘  └───────────┬────────────┘ │
-│       │               │                      │              │
-│  ┌────▼───────────────▼──────────────────────▼────────────┐ │
-│  │                  wis2box-api (pygeoapi)                 │ │
-│  │              OGC API — Features / Records               │ │
-│  └────────────────────────┬───────────────────────────────┘ │
-│                           │                                 │
-│  ┌────────────────────────▼───────────────────────────────┐ │
-│  │              wis2box-management                         │ │
-│  │    metadata publishing · data ingest · MQTT subscribe   │ │
-│  └───────────┬────────────────────────────┬───────────────┘ │
-│              │                            │                 │
-│  ┌───────────▼──────┐         ┌───────────▼──────────────┐  │
-│  │   Elasticsearch  │         │   Mosquitto (MQTT)       │  │
-│  │   (search index) │         │   (message broker)       │  │
-│  └──────────────────┘         └──────────────────────────┘  │
-│              │                            │                 │
-│  ┌───────────▼────────────────────────────▼──────────────┐  │
-│  │                 MinIO (S3 storage)                     │  │
-│  │         wis2box-incoming / wis2box-public              │  │
-│  └────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Service breakdown
-
-| Service | Container | Role |
-|---------|-----------|------|
-| **nginx** | `nginx` | Reverse proxy, TLS termination |
-| **wis2box-ui** | `wis2box-ui` | Public-facing map and data viewer |
-| **wis2box-webapp** | `wis2box-webapp` | Admin web application |
-| **wis2box-api** | `wis2box-api` | OGC API endpoint (pygeoapi), serves data & metadata |
-| **wis2box-management** | `wis2box-management` | Core engine — subscribes to MQTT, processes data |
-| **wis2box-auth** | `wis2box-auth` | Token-based auth for data ingest |
-| **Elasticsearch** | `elasticsearch` | Backend index for API queries |
-| **Mosquitto** | `mosquitto` | MQTT broker for pub/sub messaging |
-| **MinIO** | `wis2box-minio` | S3-compatible object storage |
-
-### Key URLs (AODN dev deployment)
-
-| Endpoint | URL |
-|----------|-----|
-| Homepage | `http://imos-wis.dev.aodn.org.au` |
-| OGC API | `http://imos-wis.dev.aodn.org.au/oapi` |
-| MinIO Console | `http://imos-wis.dev.aodn.org.au:9001` |
-| MQTT Broker | `mqtt://imos-wis.dev.aodn.org.au:1883` |
+| Variable | Description |
+|---|---|
+| `WSSH` | Significant wave height (m) |
+| `WPPE` | Spectral peak wave period (s) |
+| `WPFM` | Mean wave period (s) |
+| `WPDI` | Peak wave direction (°) |
+| `SSWMD` | Mean wave direction (°) |
+| `WMDS` / `WPDS` | Directional spread (°) |
 
 ---
 
-## Slide 5 — AODN Deployment: wis2box-aodn
+## Repositories
 
-### Repository layout
+| Repository | Purpose |
+|---|---|
+| **[wis2box-aodn](https://github.com/aodn/wis2box-aodn)** *(this repo)* | wis2box deployment configuration — station metadata, dataset mappings, discovery metadata MCF files, and operational scripts |
+| **[dataflow-orchestration](https://github.com/aodn/dataflow-orchestration/tree/main/projects/wis2)** | Prefect-based upstream data pipeline — converts IMOS NetCDF files to CSV and uploads them to the wis2box MinIO incoming bucket |
+| **[appdeploy](https://github.com/aodn/appdeploy/tree/main/tf/wis2)** | Terraform module that provisions the complete AWS infrastructure (ECS Fargate, ALB, NLB, CloudFront, EFS, Route 53) |
+| **[wis2box](https://github.com/wmo-im/wis2box)** *(WMO)* | The WMO reference implementation of a WIS 2.0 Node — CSV→BUFR conversion, MQTT pub/sub, OGC API, and web UI |
+
+---
+
+## Repository Structure (`wis2box-aodn`)
 
 ```
 wis2box-aodn/
-├── wis2box/                        # Docker Compose & runtime config
-│   ├── docker-compose.yml          # Service definitions
-│   ├── wis2box.env.example         # Environment template
-│   └── wis2box-ctl.py              # Control script
-├── wis2-pipeline/wis2box-data/     # Data pipeline configuration
-│   ├── metadata/
-│   │   ├── discovery/wave-buoys.yml   # Dataset discovery metadata (MCF)
-│   │   └── station/station_list.csv   # WIGOS station registry
-│   ├── mappings/
-│   │   └── wave_buoy_template.json    # CSV→BUFR mapping template
-│   └── scripts/
-│       ├── publish_metadata.sh        # Publish metadata to wis2box
-│       └── unpublish_metadata.sh      # Remove published metadata
-├── wis2-terraform/                 # AWS infrastructure (Terraform)
-└── workshop/                       # This workshop
-```
-
-### Station network
-
-The deployment currently registers **23 wave buoy stations** around the Australian coast:
-
-| Region | Example Stations |
-|--------|-----------------|
-| Victoria | Apollo Bay, Central, Cape Bridgewater, Wilsons Prom |
-| Tasmania | Storm Bay |
-| Western Australia | Coral Bay, Shark Bay, Hillarys, Ocean Beach, Torbay West |
-| South Australia | Brighton, North Kangaroo Island, Robe, Ceduna |
-| New South Wales | Wooli, Collaroy-Narrabeen, Bengello, Tathra |
-| Queensland | Karumba, Mission Beach |
-| Northern Territory | Fenton Patches, Maningrida |
-
-All stations use WIGOS identifiers in the format `0-{issuer}-0-{station_id}` (e.g. `0-22000-0-7811080` for Apollo Bay).
-
-### Data flow — end to end
-
-```
-  IMOS wave buoys
-        │
-        ▼
-  CSV observation file
-  (SSWMD, WMDS, WPDI, WPDS, WPFM, WPPE, WSSH)
-        │
-        ▼
-  Upload to MinIO (wis2box-incoming bucket)
-  path: au-imos/data/core/ocean/surface-based-observations/wave-buoys/
-        │
-        ▼
-  wis2box-management detects new file (MQTT event)
-        │
-        ▼
-  csv2bufr plugin converts CSV → BUFR4
-  using wave_buoy_template.json
-        │
-        ├──► BUFR file stored in wis2box-public bucket
-        │
-        ├──► bufr2geojson converts to GeoJSON
-        │    └──► Indexed in Elasticsearch → served via OGC API
-        │
-        └──► WIS 2.0 notification published to MQTT broker
-             topic: origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys
+├── wis2-pipeline/wis2box-data/
+│   ├── metadata/discovery/          # MCF YAML — dataset discovery records
+│   ├── metadata/station/            # station_list.csv — WIGOS station registry
+│   ├── mappings/                    # wave_buoy_template.json — CSV→BUFR mapping
+│   └── scripts/                     # publish/unpublish metadata scripts
+├── wis2-terraform/                  # Terraform entry point (uses appdeploy module)
+├── docs/                            # Technical documentation
+│   ├── infrastructure.md            # AWS architecture, ECS task layout, Terraform details
+│   ├── pipeline.md                  # Upstream data pipeline (dataflow-orchestration)
+│   ├── pygeoAPI.md                  # OGC API usage guide and query examples
+│   ├── walkthrough.md               # Step-by-step operational guide
+│   └── mqtt_msg.md                  # WIS2 Notification Message format reference
+└── resources/wis2-notebooks/        # Jupyter notebooks for data exploration
 ```
 
 ---
 
-## Slide 6 — Metadata Deep-Dive
+## Partners & Standards Bodies
 
-### Station metadata
-
-File: `wis2-pipeline/wis2box-data/metadata/station/station_list.csv`
-
-```csv
-station_name,wigos_station_identifier,traditional_station_identifier,facility_type,latitude,longitude,elevation,barometer_height,territory_name,wmo_region
-APOLLO-BAY,0-22000-0-7811080,7811080,seaFixed,-38.7541,143.7232,0,0,AUS,southWestPacific
-```
-
-Key fields:
-- **`wigos_station_identifier`** — Globally unique station ID registered with OSCAR/Surface.
-- **`facility_type`** — All buoys are `seaFixed` (moored platforms).
-- **`wmo_region`** — All Australian stations fall under `southWestPacific`.
-
-### Discovery metadata (MCF)
-
-File: `wis2-pipeline/wis2box-data/metadata/discovery/wave-buoys.yml`
-
-```yaml
-wis2box:
-    retention: P30D                          # Keep data for 30 days
-    topic_hierarchy: au-imos/data/core/ocean/surface-based-observations/wave-buoys
-    country: AUS
-    centre_id: au-imos
-    data_mappings:
-        plugins:
-            csv:
-                - plugin: wis2box.data.csv2bufr.ObservationDataCSV2BUFR
-                  template: wave_buoy_template
-                  notify: true
-                  file-pattern: '.*\.csv$'
-            bufr4:
-                - plugin: wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON
-                  file-pattern: '.*\.bufr4$'
-
-metadata:
-    identifier: urn:wmo:md:au-imos:wave-buoys   # Globally unique dataset URN
-    hierarchylevel: dataset
-
-identification:
-    title: Wave buoy observations made as part of the -- IMOS-WIS2.0
-    wmo_data_policy: core                        # Free and unrestricted access
-    extents:
-        spatial:
-            - bbox: [112.0, -44.0, 155.0, -10.0]   # Australian coastal waters
-        temporal:
-            - begin: 2025-08-30
-              resolution: PT30M                      # 30-minute observation interval
-```
-
-### How metadata is published
-
-```bash
-# Publish station metadata + discovery metadata to wis2box
-docker exec wis2box-management \
-    wis2box metadata discovery publish \
-    /data/wis2box/metadata/discovery/wave-buoys.yml
-```
-
-> See `wis2-pipeline/wis2box-data/scripts/publish_metadata.sh` for the automated version.
+| Organisation | Role |
+|---|---|
+| **[WMO](https://wmo.int)** | Defines WIS 2.0 standards; operates Global Broker, Global Cache, and Global Discovery Catalogue |
+| **[Bureau of Meteorology (BOM)](http://www.bom.gov.au)** | Australia's WMO member; supports IMOS to register `au-imos` centre |
+| **[IMOS](https://imos.org.au)** | Funds and operates the Australian ocean observing infrastructure |
+| **[AODN](https://portal.aodn.org.au/)** | Manages the data portal and WIS 2.0 node deployment |
+| **[OceanOPS](https://www.ocean-ops.org)** | Tracks WIGOS station registration and operational status |
+| **[OSCAR/Surface](https://oscar.wmo.int/surface/)** | WMO registry for WIGOS station identifiers |
 
 ---
 
-## Slide 7 — Infrastructure (Terraform)
+## Further Reading
 
-The `wis2-terraform/` directory contains Terraform configurations for provisioning the wis2box-aodn deployment on AWS using the [appdeploy `wis2` module](https://github.com/aodn/appdeploy/tree/main/tf/wis2).
-
-### Key infrastructure components
-
-| Resource | Purpose |
-|----------|---------|
-| ECS Fargate cluster & service | Runs the 7-container wis2box task (4 vCPU / 8 GiB) with auto-scaling (1–10 tasks) |
-| Application Load Balancer | HTTPS ingress, TLS termination, listener rules for webapp and API |
-| Network Load Balancer | TCP:1883 ingress for the Mosquitto MQTT broker |
-| CloudFront distribution | CDN with WAF, HSTS, and custom error pages |
-| EFS volumes (×7, encrypted) | Persistent container storage across 3 Availability Zones |
-| S3 config bucket | Stores environment variable files loaded into containers at startup |
-| Route 53 records | A-alias records for the web app (→ CloudFront) and broker domain (→ NLB) |
-| SSM Parameter Store | Shared infrastructure references (VPC, subnets, certs, WAF) — no hard-coded values |
-
-### ECS task containers
-
-| Container | Role |
-|-----------|------|
-| `minio` | S3-compatible object storage for all wis2box data buckets |
-| `mosquitto` | WMO-customised Eclipse Mosquitto MQTT broker |
-| `elasticsearch` | Single-node search backend for the OGC API |
-| `wis2box-api` | pygeoapi-based OGC API, serves `/oapi` |
-| `wis2box-management` | Core data pipeline — subscribes to MQTT, converts and publishes data |
-| `wis2box-auth` | Token-based authentication service |
-| `wis2box-webapp` | Vue.js admin web UI, served at `/wis2box-webapp/*` |
-
-> For full architecture diagrams and deployment details see [`docs/infrastructure.md`](infrastructure.md).
-
----
-
-## Slide 8 — Walkthrough: Publishing Data
-
-### Prerequisites
-
-- SSH access to the wis2box EC2 instance
-- Docker and Docker Compose running
-- `wis2box.env` configured from the example template
-
-### Step 1 — Start the stack
-
-```bash
-cd wis2box
-python wis2box-ctl.py start
-```
-
-### Step 2 — Publish metadata
-
-```bash
-# Publish station list
-docker exec wis2box-management \
-    wis2box metadata station publish-collection
-
-# Publish discovery metadata
-docker exec wis2box-management \
-    wis2box metadata discovery publish \
-    /data/wis2box/metadata/discovery/wave-buoys.yml
-```
-
-### Step 3 — Ingest observation data
-
-Upload a CSV file to the MinIO incoming bucket at the path matching the topic hierarchy:
-
-```bash
-# Via MinIO client (mc)
-mc cp observation.csv \
-    wis2box/wis2box-incoming/au-imos/data/core/ocean/surface-based-observations/wave-buoys/
-```
-
-Or via SFTP:
-
-```bash
-sftp -P 8022 wis2box@<host>
-put observation.csv au-imos/data/core/ocean/surface-based-observations/wave-buoys/
-```
-
-### Step 4 — Verify
-
-```bash
-# Check the API for published observations
-curl -s http://imos-wis.dev.aodn.org.au/oapi/collections | python -m json.tool
-
-# Subscribe to MQTT notifications
-mosquitto_sub -h imos-wis.dev.aodn.org.au -t "origin/a/wis2/au-imos/#" -v
-```
-
----
-
-## Slide 9 — Key Concepts Summary
-
-| Concept | In our deployment |
-|---------|-------------------|
-| **WIS 2.0 Node** | `wis2box-aodn` Docker stack |
-| **Centre ID** | `au-imos` |
-| **Data policy** | `core` (open) |
-| **Topic hierarchy** | `au-imos/data/core/ocean/surface-based-observations/wave-buoys` |
-| **Data format** | CSV → BUFR4 → GeoJSON |
-| **Station IDs** | WIGOS format `0-{issuer}-0-{id}` |
-| **Metadata standard** | MCF (YAML) / ISO 19115 / WCMP2 |
-| **Message broker** | Mosquitto (MQTT) |
-| **Object storage** | MinIO (S3-compatible) |
-| **API** | OGC API via pygeoapi |
-| **Observation interval** | Every 30 minutes (`PT30M`) |
-
----
-
-## Slide 10 — Further Reading & Resources
-
-### Official documentation
-
-- [wis2box Documentation](https://docs.wis2box.wis.wmo.int/)
-- [wis2box GitHub Repository](https://github.com/wmo-im/wis2box)
-- [WIS 2.0 Guide](https://guide.wis2box.wis.wmo.int/)
-- [WMO WIS 2.0 Standards](https://community.wmo.int/en/activity-areas/wis)
-
-### AODN / IMOS
-
-- [IMOS Homepage](https://imos.org.au/)
-- [AODN Portal](https://portal.aodn.org.au/)
-- [THREDDS Catalogue — Wave Buoys](https://thredds.aodn.org.au/thredds/catalog/IMOS/COASTAL-WAVE-BUOYS/WAVE-BUOYS/REALTIME/WAVE-PARAMETERS/catalog.html)
-
-### Tools
-
-- [csv2bufr — CSV to BUFR converter](https://github.com/wmo-im/csv2bufr)
-- [pymetdecoder — BUFR decoder](https://github.com/wmo-im/pymetdecoder)
-- [pywis-pubsub — WIS 2.0 pub/sub client](https://github.com/wmo-im/pywis-pubsub)
-- [OSCAR/Surface — WMO station registry](https://oscar.wmo.int/surface/)
-
-### This repository
-
-- [`wis2-pipeline/wis2box-data/README.md`](../wis2-pipeline/wis2box-data/README.md) — Detailed metadata management docs
-- [`wis2box/wis2box.env.example`](../wis2box/wis2box.env.example) — Environment configuration reference
+| Document | Description |
+|---|---|
+| [`docs/infrastructure.md`](infrastructure.md) | Full AWS architecture diagram, ECS container layout, Terraform module details |
+| [`docs/pipeline.md`](pipeline.md) | End-to-end data pipeline from IMOS S3 to WIS2 MQTT |
+| [`docs/pygeoAPI.md`](pygeoAPI.md) | OGC API reference — querying stations, notifications, and downloading BUFR |
+| [`docs/walkthrough.md`](walkthrough.md) | Step-by-step guide to publishing data through the IMOS WIS2 node |
+| [`docs/mqtt_msg.md`](mqtt_msg.md) | WIS2 Notification Message (WNM) format and field definitions |
+| [wis2box Documentation](https://docs.wis2box.wis.wmo.int/) | Official wis2box operator and developer guide |
+| [WIS 2.0 Guide](https://guide.wis2box.wis.wmo.int/) | WMO WIS 2.0 technical guide |
