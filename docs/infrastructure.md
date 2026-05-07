@@ -1,7 +1,6 @@
 # WIS2 Infrastructure Deployment
 
 The WIS2 infrastructure was deployed on AODN AWS account using Terraform code. The main code uses a Terraform module [appdeploy](https://github.com/aodn/appdeploy/tree/main/tf/wis2) that deploys a wis2box application container on AWS.
-
 ## Overview
 
 The module provisions a complete, production-ready AWS stack covering:
@@ -18,6 +17,8 @@ The module is designed as a self-contained, reusable unit. All shared infrastruc
 
 ## Architecture Diagram
 
+### AWS Infrastructure
+
 The diagram below shows all AWS services deployed by this module and their relationships.
 
 ```mermaid
@@ -33,114 +34,137 @@ flowchart TD
     end
 
     subgraph cdn["CloudFront  (Global Edge — us-east-1)"]
-        CF["CloudFront Distribution\n• aliases: app_hostnames\n• viewer protocol: HTTPS only\n• TLS 1.2+ (SNI)\n• access logs → S3 log bucket"]
-        WAF(["WAF WebACL\n(shared, global)\nfrom SSM /apps/global/waf"])
-        ACMGlobal(["ACM Wildcard Cert\nus-east-1\nfrom SSM /core/wildcard_id"])
-        CFOriginPolicy["Origin Request Policy\n• headers: allViewer\n• query strings: all\n• cookies: all"]
+        CF["CloudFront Distribution\n• aliases: wis2box.*.aodn.org.au\n• viewer protocol: HTTPS only\n• TLS 1.2+ SNI\n• access logs → S3 log bucket\n• /data/* → CloudFront Function\n  (modify path prefix)"]
+        WAF(["WAF WebACL\n(shared, global)\n/apps/global/waf"])
+        ACMGlobal(["ACM Wildcard Cert\nus-east-1\n/core/wildcard_id"])
         CFRespPolicy["Response Headers Policy\nHSTS: max-age=31536000\nincludeSubDomains; preload"]
+        S3Err["S3: aodn-error-pages\n403.html (edge/staging/prod)\nvia shared OAC"]
     end
 
     subgraph public["Public Subnets  (×3 AZs)"]
-        ALB["Application Load Balancer\n• HTTP:80 → HTTPS redirect 301\n• HTTPS:443 TLS 1.3\n• deletion protection in production\n• (created or shared via SSM)"]
-        ACMRegional(["ACM Wildcard Cert\nregional\nfrom SSM /core/wildcard_id"])
-        NLB["Network Load Balancer\nwis2box-broker\nTCP:1883\n(always created)"]
+        ALB["Application Load Balancer\n• HTTP:80 → HTTPS 301\n• HTTPS:443 TLS 1.3\n• shared or dedicated\n• deletion protection in prod"]
+        ACMRegional(["ACM Wildcard Cert\nregional\n/core/wildcard_id"])
+        NLB["Network Load Balancer\nnlb-wis2box-broker\nTCP:1883"]
     end
 
-    subgraph alb_rules["ALB Listener Rules  (HTTPS:443)"]
-        TG_App["Target Group: app\nHTTP · IP · port 80 or 9000\nhealth check: /health"]
-        TG_Broker["Target Group: tg_broker\nTCP · IP · port 1883"]
-        TG_Extra["Target Group: additional_public_tg\n(one per additional_public_containers)\n(optional)"]
-        Rule_Redirect["Rule: context_path redirect\n/ → context_path (302)\n(if context_path set)"]
-        Rule_App["Rule: host-header match\nper app_hostname → TG app"]
-        Rule_CF["Rule: additional_host_rules\n(CloudFront internal hostnames)\n→ TG app"]
-        Rule_Extra["Rule: host + path pattern\n→ TG additional_public_tg\n(optional)"]
+    subgraph alb_rules["ALB Listener Rules"]
+        TG_Minio["TG: minio\nHTTP · port 9000\nGET /minio/health/live"]
+        TG_Broker["TG: tg_broker\nTCP · port 1883"]
+        TG_WebApp["TG: wis2box-webapp\nHTTP · port 4173\npath: /wis2box-webapp/*"]
+        TG_API["TG: wis2box-api\nHTTP · port 80\npath: /oapi*"]
     end
 
-    subgraph ecs["ECS Fargate Service  (Private Subnets ×3 AZs)"]
-        subgraph task["ECS Task Definition"]
-            AppCtr["app container\nimage: ECR (digest/tag)\nport: 9000\nenv: variables + secrets + env files"]
-            NginxCtr["nginx proxy\n(optional)\nport: 80\nproxy_pass → app:9000"]
-            MosqCtr["mosquitto\nMQTT broker\nport: 1883"]
-            ExtraCtr["extra containers\n(optional)\nadditional_public_containers"]
+    subgraph ecs["ECS Fargate Service  (Private Subnets ×3 AZs)  —  4 vCPU · 8 GiB"]
+        subgraph task["ECS Task  (7 containers)"]
+            Minio["minio\nport 9000 · 9001\nminio/minio:2024-08-03"]
+            Mosquitto["mosquitto\nport 1883 · 8884\nwis2box-broker:1.0.0"]
+            ES["elasticsearch\nport 9200\nelasticsearch:8.6.2\n512 MiB heap"]
+            API["wis2box-api\nport 80\nwis2box-api:1.0.0\n(pygeoapi / OGC API)"]
+            Mgmt["wis2box-management\nwis2box-management:1.0.0\n(pubsub subscriber)"]
+            Auth["wis2box-auth\nport 8080\nwis2box-auth:1.0.0"]
+            WebApp["wis2box-webapp\nport 4173\nwis2box-webapp:1.0.0"]
         end
-        ASG["Auto Scaling\nCPU target: 50%\nmin / max: 1 / 10\n(configurable)"]
-        CircuitBreaker["Deployment circuit breaker\n+ automatic rollback"]
-        ECSExec["ECS Exec enabled\n(interactive shell access)"]
+        ASG["Auto Scaling\nCPU target: 50%\nmin 1 · max 10"]
     end
 
-    subgraph storage["Storage"]
-        S3Cfg["S3 Config Bucket\nappconfig-{app}-{env}\n• versioned\n• env files (MD5-keyed objects)\n• task exec role: GetObject"]
-        S3Data["S3 Data Bucket\ndata-{app}-{env}\n(optional)\n• versioned\n• CORS configurable\n• task role: full CRUD"]
-        EFS["EFS Volume(s)\n• encrypted at rest\n• backup enabled\n• mount targets ×3 AZs\n• access via EFS access points\n• NFS ingress from ECS SG only"]
+    subgraph storage["Storage (EFS — encrypted, backup enabled, ×3 AZs)"]
+        EFS_ES[("wis2box-es-data\n/usr/share/elasticsearch/data")]
+        EFS_Minio[("wis2box-minio-data\n/data")]
+        EFS_Data[("wis2box-host-datadir\n/data/wis2box")]
+        EFS_Auth[("wis2box-auth-data\n/data/wis2box")]
+        EFS_Htpasswd[("wis2box-htpasswd\n/home/wis2box/.htpasswd")]
+        EFS_SSH[("wis2box-minio-ssh-config\n/home/miniouser/.ssh")]
+        EFS_Mappings[("wis2box-api-mappings\n/data/wis2box/mappings")]
     end
 
-    subgraph dr["Disaster Recovery Account  (optional)"]
-        S3Replica["S3 Replica Bucket\nGLACIER storage class\ncross-account replication"]
+    subgraph s3["S3"]
+        S3Cfg["Config Bucket\nappconfig-wis2box-{env}\nenv files (MD5-keyed)"]
     end
 
-    subgraph config["Configuration & Registry  (resolved at deploy time)"]
-        SSM["SSM Parameter Store\n/core/vpc_id · vpc_cidr\n/core/subnets_public · subnets_private\n/core/zone_domain · zone_id\n/core/wildcard_id/{domain}\n/apps/global/waf\n/apps/global/oac/shared_s3_oac\n/apps/alb/{name}/* (shared ALB)\n/apps/{app}/{env}/image_digest"]
-        ECR["ECR Registry\n851725428481.dkr.ecr\n.ap-southeast-2.amazonaws.com\nimage: {repo}@{digest}"]
+    subgraph config["Resolved at deploy time"]
+        SSM["SSM Parameter Store\ncredentials · image digest\nVPC · subnets · certs · WAF"]
+        GHCR["GitHub Container Registry\nghcr.io/world-meteorological-organization/"]
+        DockerHub["Docker Hub / Elastic\nminio · elasticsearch"]
     end
 
-    subgraph errpages["Error Pages  (optional)"]
-        S3Err["S3 Bucket: aodn-error-pages\n403.html\nvia shared OAC"]
-    end
-
-    %% DNS flow
-    WebClient -->|"DNS query"| R53App
-    MQTTClient -->|"DNS query"| R53Broker
-    R53App -->|"A alias"| CF
-    R53Broker -->|"A alias"| NLB
+    %% DNS
+    WebClient -->|DNS| R53App
+    MQTTClient -->|DNS| R53Broker
+    R53App -->|A alias| CF
+    R53Broker -->|A alias| NLB
 
     %% CDN → ALB
-    WAF -. "filters requests" .-> CF
-    ACMGlobal -. "viewer cert (SNI)" .-> CF
-    CFOriginPolicy -. "attached" .-> CF
-    CFRespPolicy -. "attached" .-> CF
-    CF -->|"HTTPS origin\nforward headers/QS/cookies"| ALB
-    CF -->|"403 custom error\n/_cf-errors/403.html\n(edge/staging/production)"| S3Err
+    WAF -. filters .-> CF
+    ACMGlobal -. viewer cert .-> CF
+    CFRespPolicy -. HSTS .-> CF
+    CF -->|HTTPS origin| ALB
+    CF -. 403 error page .-> S3Err
 
-    %% ALB certs and rules
-    ACMRegional -. "HTTPS listener cert" .-> ALB
-    ALB --> Rule_Redirect
-    ALB --> Rule_App
-    ALB --> Rule_CF
-    ALB --> Rule_Extra
-    Rule_Redirect --> TG_App
-    Rule_App --> TG_App
-    Rule_CF --> TG_App
-    Rule_Extra --> TG_Extra
-
-    %% NLB
-    NLB -->|"TCP:1883"| TG_Broker
+    %% ALB
+    ACMRegional -. HTTPS cert .-> ALB
+    ALB --> TG_Minio & TG_WebApp & TG_API
+    NLB --> TG_Broker
 
     %% TGs → containers
-    TG_App -->|"HTTP port 80"| NginxCtr
-    TG_App -->|"HTTP port 9000\n(nginx disabled)"| AppCtr
-    TG_Broker -->|"TCP port 1883"| MosqCtr
-    TG_Extra -->|"container port"| ExtraCtr
-    NginxCtr -->|"proxy_pass :9000"| AppCtr
+    TG_Minio --> Minio
+    TG_WebApp --> WebApp
+    TG_API --> API
+    TG_Broker --> Mosquitto
 
-    %% ECS storage
-    AppCtr -->|"reads env files at startup\ntask exec role: s3:GetObject"| S3Cfg
-    AppCtr -->|"read/write app data\ntask role: full CRUD\n(optional)"| S3Data
-    AppCtr -->|"NFS mount :2049\nvia EFS access point"| EFS
+    %% Inter-container communication (localhost)
+    Minio -->|"MQTT notify\ntcp://localhost:1883"| Mosquitto
+    API -->|"backend\nlocalhost:9200"| ES
+    Mgmt -->|"pubsub\nlocalhost:1883"| Mosquitto
+    Mgmt -->|"API calls\nlocalhost:80"| API
+    Mgmt -->|"auth check\nlocalhost:8080"| Auth
+    WebApp -->|"API calls\nlocalhost:80/oapi"| API
+    WebApp -->|"auth\nlocalhost:8080"| Auth
+    Auth -->|"storage\nlocalhost:9000"| Minio
 
-    %% Image
-    ECR -->|"image pull on task start\ndigest pinned"| AppCtr
+    %% EFS mounts
+    ES --- EFS_ES
+    Minio --- EFS_Minio
+    Minio --- EFS_SSH
+    Mgmt --- EFS_Data
+    Mgmt --- EFS_Htpasswd
+    Auth --- EFS_Auth
+    API --- EFS_Mappings
 
-    %% DR replication
-    S3Data -->|"async replication\n(optional)"| S3Replica
+    %% S3 config
+    Minio -. env files at startup .-> S3Cfg
 
-    %% SSM at deploy time
-    SSM -. "Terraform data sources\n(plan / apply only)" .-> ALB
-    SSM -. "VPC / subnet IDs" .-> ecs
-    SSM -. "image_digest" .-> AppCtr
-    SSM -. "global cert + WAF + OAC" .-> cdn
+    %% Image pull
+    GHCR -. image pull .-> Mosquitto & API & Mgmt & Auth & WebApp
+    DockerHub -. image pull .-> Minio & ES
+
+    %% SSM
+    SSM -. secrets + infra refs .-> ecs
+    SSM -. Terraform data sources .-> ALB
 
     %% Scaling
-    ASG -. "scales" .-> task
+    ASG -. scales .-> task
+```
+
+### Container Startup Order
+
+All 7 containers start inside the same ECS task. The `dependsOn` conditions enforce this startup sequence:
+
+```mermaid
+flowchart LR
+    Mosquitto["mosquitto\n(START)"]
+    ES["elasticsearch\n(HEALTHY)"]
+    Auth["wis2box-auth\n(START)"]
+    API["wis2box-api\n(HEALTHY)"]
+    Minio["minio\n(app container)"]
+    Mgmt["wis2box-management"]
+    WebApp["wis2box-webapp"]
+
+    Mosquitto --> Minio
+    Mgmt --> Minio
+    ES --> API
+    API --> Mgmt
+    Mosquitto --> Mgmt
+    Auth --> Mgmt
 ```
 
 ---
@@ -191,17 +215,19 @@ The service runs the WIS2box task definition inside private subnets. Key configu
 | ECS Exec | Enabled | Allows `aws ecs execute-command` for live debugging |
 | Steady-state wait | Enabled | Terraform waits up to 15 min for deployment |
 
-**Task container layout:**
+**Task container layout (7 containers, 4 vCPU / 8 GiB):**
 
-| Container | Port | Always present | Description |
-|-----------|------|---------------|-------------|
-| `app` | 9000 | ✅ | Main WIS2box application, image from ECR |
-| `mosquitto` | 1883 | ✅ | Eclipse Mosquitto MQTT broker for WIS2 data exchange |
-| `nginx` | 80 | Optional (`nginx_proxy = true`) | Reverse proxy in front of the app container |
-| `extra` | varies | Optional | Any additional containers via `extra_container_definitions` |
-| `additional_public` | varies | Optional | Extra containers with their own ALB target groups |
+| Container | Image | Port(s) | Role | EFS mounts |
+|-----------|-------|---------|------|-----------|
+| `minio` *(app container)* | `minio/minio:2024-08-03` | 9000 (API), 9001 (console) | S3-compatible object storage for all WIS2box data buckets. Publishes MQTT events to mosquitto when objects arrive | `wis2box-minio-data` → `/data`; `wis2box-minio-ssh-config` → `/home/miniouser/.ssh` |
+| `mosquitto` | `wis2box-broker:1.0.0` | 1883 (MQTT), 8884 | WMO-customised Eclipse Mosquitto MQTT broker. Receives storage events from MinIO, publishes WIS2 notifications | — |
+| `elasticsearch` | `elasticsearch:8.6.2` | 9200 | Single-node Elasticsearch (512 MiB heap). Search backend for `wis2box-api` | `wis2box-es-data` → `/usr/share/elasticsearch/data` |
+| `wis2box-api` | `wis2box-api:1.0.0` | 80 | pygeoapi-based OGC API, serves `/oapi`. Exposed publicly via ALB. Depends on Elasticsearch being healthy | `wis2box-api-mappings` → `/data/wis2box/mappings` |
+| `wis2box-management` | `wis2box-management:1.0.0` | — | Runs `wis2box pubsub subscribe` — the core WIS2box data pipeline. Processes incoming data from MQTT, validates, converts, and publishes WIS2 notifications | `wis2box-host-datadir` → `/data/wis2box`; `wis2box-htpasswd` → `/home/wis2box/.htpasswd` |
+| `wis2box-auth` | `wis2box-auth:1.0.0` | 8080 | Token-based authentication service for WIS2box | `wis2box-auth-data` → `/data/wis2box` |
+| `wis2box-webapp` | `wis2box-webapp:1.0.0` | 4173 | Vue.js web UI for monitoring, data management, and station configuration. Exposed publicly via ALB at `/wis2box-webapp/*` | — |
 
-The ALB target group points at the **nginx** container (port 80) when `nginx_proxy = true`, otherwise directly at the **app** container (port 9000). The NLB target group always points at the **mosquitto** container (port 1883).
+The ALB has **two** public-facing target groups for this task: `wis2box-api` (path `/oapi*`) and `wis2box-webapp` (path `/wis2box-webapp/*`). The NLB target group forwards TCP:1883 to the `mosquitto` container. The `minio` container is the task's primary container (health-checked by ALB at `/minio/health/live`).
 
 **Security group rules** for the ECS service are tightly scoped:
 
