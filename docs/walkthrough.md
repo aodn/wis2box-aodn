@@ -10,8 +10,33 @@ Before starting, make sure you have:
 
 - **MQTT Explorer** installed — download from https://mqtt-explorer.com/
 - **AWS CLI** configured with access to the AODN edge account (`ap-southeast-2`)
+- **AWS Session Manager plugin** installed — required for `aws ecs execute-command` (see below)
 - A running **wis2box-edge** ECS cluster with the `wis2box-management` container active
 - The **exercise metadata files** from this repository (`wis2-pipeline/wis2box-data/`)
+
+### Install the AWS Session Manager Plugin
+
+The Session Manager plugin is required to open interactive shells into ECS containers. Without it, `aws ecs execute-command` will fail with `SessionManagerPlugin is not found`.
+
+**macOS:**
+```bash
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/mac_arm64/session-manager-plugin.pkg" -o "session-manager-plugin.pkg"
+
+sudo installer -pkg session-manager-plugin.pkg -target / 
+```
+
+**Linux (x86_64):**
+```bash
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o session-manager-plugin.deb
+sudo dpkg -i session-manager-plugin.deb
+```
+
+**Verify:**
+```bash
+session-manager-plugin --version
+```
+
+> Full installation guide: https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html
 
 ### Logging into wis2box-management (ECS)
 
