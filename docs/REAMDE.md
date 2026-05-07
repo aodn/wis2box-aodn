@@ -340,22 +340,34 @@ docker exec wis2box-management \
 
 ## Slide 7 — Infrastructure (Terraform)
 
-The `wis2-terraform/` directory contains Terraform configurations for provisioning the wis2box-aodn deployment on AWS.
+The `wis2-terraform/` directory contains Terraform configurations for provisioning the wis2box-aodn deployment on AWS using the [appdeploy `wis2` module](https://github.com/aodn/appdeploy/tree/main/tf/wis2).
 
 ### Key infrastructure components
 
 | Resource | Purpose |
 |----------|---------|
-| EC2 instance | Hosts the Docker Compose stack |
-| EFS volume | Persistent storage for MinIO data (`/mnt/efs-mount-point`) |
-| Security groups | Controls access to HTTP (80/443), MQTT (1883), and MinIO (9000/9001) |
-| Elastic IP | Stable public address for `imos-wis.dev.aodn.org.au` |
+| ECS Fargate cluster & service | Runs the 7-container wis2box task (4 vCPU / 8 GiB) with auto-scaling (1–10 tasks) |
+| Application Load Balancer | HTTPS ingress, TLS termination, listener rules for webapp and API |
+| Network Load Balancer | TCP:1883 ingress for the Mosquitto MQTT broker |
+| CloudFront distribution | CDN with WAF, HSTS, and custom error pages |
+| EFS volumes (×7, encrypted) | Persistent container storage across 3 Availability Zones |
+| S3 config bucket | Stores environment variable files loaded into containers at startup |
+| Route 53 records | A-alias records for the web app (→ CloudFront) and broker domain (→ NLB) |
+| SSM Parameter Store | Shared infrastructure references (VPC, subnets, certs, WAF) — no hard-coded values |
 
-### AODN-specific customisations
+### ECS task containers
 
-1. **No wis2downloader** — IMOS is a data *publisher*, not a consumer; the downloader service is disabled.
-2. **EFS for MinIO** — Data persists on AWS EFS rather than local Docker volumes.
-3. **SFTP ingest** — MinIO is configured with SFTP (`--sftp` flag on port 8022) for automated data upload.
+| Container | Role |
+|-----------|------|
+| `minio` | S3-compatible object storage for all wis2box data buckets |
+| `mosquitto` | WMO-customised Eclipse Mosquitto MQTT broker |
+| `elasticsearch` | Single-node search backend for the OGC API |
+| `wis2box-api` | pygeoapi-based OGC API, serves `/oapi` |
+| `wis2box-management` | Core data pipeline — subscribes to MQTT, converts and publishes data |
+| `wis2box-auth` | Token-based authentication service |
+| `wis2box-webapp` | Vue.js admin web UI, served at `/wis2box-webapp/*` |
+
+> For full architecture diagrams and deployment details see [`docs/infrastructure.md`](infrastructure.md).
 
 ---
 

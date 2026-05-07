@@ -250,25 +250,16 @@ wis2box-aodn/
 
 | Resource | Purpose |
 |---|---|
-| EC2 instance | Hosts the Docker Compose stack |
-| EFS volume | Persistent storage for MinIO data (`/mnt/efs-mount-point`) |
-| Security groups | Controls access to HTTP (80/443), MQTT (1883), and MinIO (9000/9001) |
-| Elastic IP | Stable public address |
+| ECS Fargate cluster & service | Runs the 7-container wis2box task (4 vCPU / 8 GiB) with auto-scaling |
+| Application Load Balancer | HTTPS ingress, TLS termination, listener rules for webapp and API |
+| Network Load Balancer | TCP:1883 ingress for the Mosquitto MQTT broker |
+| CloudFront distribution | CDN with WAF, HSTS, and custom error pages |
+| EFS volumes (×7, encrypted) | Persistent container storage across 3 Availability Zones |
+| S3 config bucket | Stores environment variable files loaded into containers at startup |
+| Route 53 records | A-alias records for the web app (→ CloudFront) and broker (→ NLB) |
+| SSM Parameter Store | Shared infrastructure references (VPC, subnets, certs, WAF) |
 
-**AODN-specific customisations:**
-1. **No wis2downloader** — IMOS is a data *publisher*, not a consumer.
-2. **EFS for MinIO** — Data persists on AWS EFS rather than local Docker volumes.
-3. **SFTP ingest** — MinIO is configured with SFTP (`--sftp` flag on port 8022) for automated data upload.
-
-#### Volume Mappings
-
-```
-Host (EFS)                                    → Container
-/mnt/efs-mount-point/wis2box-data/mappings    → /data/wis2box/mappings
-/mnt/efs-mount-point/wis2box-data/metadata    → /data/wis2box/metadata
-/mnt/efs-mount-point/wis2box-data/scripts     → /data/wis2box/scripts
-/mnt/efs-mount-point/minio-data               → /data (MinIO)
-```
+> See [`docs/infrastructure.md`](infrastructure.md) for full architecture diagrams and deployment details.
 
 ### 4.3 Station Network
 
