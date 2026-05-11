@@ -11,7 +11,7 @@ Before starting, make sure you have:
 - **MQTT Explorer** installed — download from https://mqtt-explorer.com/
 - **AWS CLI** configured with access to the AODN edge account (`ap-southeast-2`)
 - **AWS Session Manager plugin** installed — required for `aws ecs execute-command` (see below)
-- A running **wis2box-edge** ECS cluster with the `wis2box-management` container active
+- AWS edge account user permission to run `aws ecs execute-command` on the **wis2box-edge** ECS cluster
 - The **exercise metadata files** from this repository (`wis2-pipeline/wis2box-data/`)
 
 ### Install the AWS Session Manager Plugin
@@ -67,7 +67,7 @@ aws ecs execute-command \
 
 WIS 2.0 uses the **MQTT protocol** to advertise the availability of weather, climate, and ocean data. The publish/subscribe model means:
 
-- **Data producers** (like IMOS) publish notification messages to their local MQTT broker.
+- **Data producers** (like IMOS) publish notification messages to our MQTT broker.
 - The **WMO Global Broker** subscribes to all WIS2 nodes and republishes the messages.
 - **Data consumers** subscribe to topics of interest and download data from the URLs in the notifications.
 
@@ -224,6 +224,11 @@ The **WMO Integrated Global Observing System (WIGOS)** provides a framework for 
 
 WIGOS ID format: `{series}-{issuer}-{issue_number}-{local_id}`
 
+*   **Series**: Identifier version. **0** is the standard for globally unique stations; other values (like `2`) are reserved for future expansion.
+*   **Issuer**: Authority that issued the ID (e.g., `22000` for OceanOPS/marine platforms).
+*   **Issue Number**: Sequential number (typically `0`).
+*   **Local ID**: Unique identifier within the issuer's scope.
+
 Example: `0-22000-0-7811080` → Apollo Bay wave buoy
 
 > **⚠ Important:** WIS2 cannot publish data without a registered WIGOS ID. Verify IDs at [OSCAR/Surface](https://oscar.wmo.int/surface/) and [OceanOPS](https://www.ocean-ops.org/) before proceeding.
@@ -313,7 +318,18 @@ csv2bufr plugin converts CSV → BUFR4
              topic: origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys-workshop
 ```
 
-### 4.2 Ingest Data via MinIO (mc)
+### 4.2 Ingest Data via MinIO (mc)  
+
+**Prerequisites:** install and configure [mc](https://docs.min.io/aistor/reference/cli/mc.html).
+
+**Step 1.** Set up the MinIO client alias:
+
+```bash
+# Set up the alias for the remote MINIO
+
+mc alias set wis2box-edge https://wis2box.edge.aodn.org.au ACCESS_KEY(get-it-from-aws-Parameter-Store) SECRET_KEY(get-it-from-aws-Parameter-Store)
+
+```
 
 **Step 1.** Set up the MinIO client alias:
 
@@ -324,8 +340,8 @@ mc alias set wis2-edge https://wis2box.edge.aodn.org.au <ACCESS_KEY> <SECRET_KEY
 **Step 2.** Upload a CSV observation file to the incoming bucket:
 
 ```bash
-mc cp observation.csv \
-    wis2-edge/wis2box-incoming/urn:wmo:md:au-imos:wave-buoys/
+mc cp resources/wis2-notebooks/data/WIGOS_0-22000-0-5501879_20260504T231500.csv \
+    wis2box-edge/wis2box-incoming/urn:wmo:md:au-imos:wave-buoys-workshop/
 ```
 
 The bucket path must match the `metadata.identifier` defined in the discovery metadata MCF file.

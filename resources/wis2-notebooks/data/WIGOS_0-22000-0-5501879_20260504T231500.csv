@@ -1,0 +1,2 @@
+timeSeries,WSSH,WPPE,WPFM,WPDI,WPDS,SSWMD,WMDS,WAVE_quality_control,TIME,latitude,longitude,regionNumber,wmoRegionSubArea,buoyOrPlatformIdentifier,blockNumber,stationNumber,wigos_station_identifier,year,month,day,hour,minute,second
+1,0.715,3.413,2.989,164.084,37.949,165.495,43.889,1.0,2026-05-04 23:15:00,-17.35452,140.72843,0,1,01879,01,879,0-22000-0-5501879,2026,5,4,23,15,0
