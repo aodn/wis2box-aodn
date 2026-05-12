@@ -41,16 +41,22 @@ publish_metadata(){
     WIS2_BUOY_SITE_NAME=$1
     print_status "Publishing discovery metadata for $WIS2_BUOY_SITE_NAME ..."
 
-    wis2box data add-collection /data/wis2box/metadata/discovery/$WIS2_BUOY_SITE_NAME.yml && \
-    wis2box metadata discovery publish /data/wis2box/metadata/discovery/$WIS2_BUOY_SITE_NAME.yml && \
-    print_success "$WIS2_BUOY_SITE_NAME metadata published successfully" || \
-    print_error "Failed to publish $WIS2_BUOY_SITE_NAME metadata"
+    if ! wis2box data add-collection /data/wis2box/metadata/discovery/$WIS2_BUOY_SITE_NAME.yml; then
+        print_error "Failed to add collection for $WIS2_BUOY_SITE_NAME"
+        return 1
+    fi
 
+    if ! wis2box metadata discovery publish /data/wis2box/metadata/discovery/$WIS2_BUOY_SITE_NAME.yml; then
+        print_error "Failed to publish discovery metadata for $WIS2_BUOY_SITE_NAME"
+        return 1
+    fi
+
+    print_success "$WIS2_BUOY_SITE_NAME metadata published successfully"
 }
 
 # List all discovery metadata files from ../metadata/discovery/
 list_discovery_metadata(){
-    ls ../metadata/discovery/*.yml | xargs -n 1 basename | sed 's/\.yml$//'
+    ls /data/wis2box/metadata/discovery/*.yml | xargs -n 1 basename | sed 's/\.yml$//'
 }
 
 # =============================================================================
@@ -60,10 +66,20 @@ list_discovery_metadata(){
 print_status "Starting WIS2Box metadata publishing process..."
 
 # -----------------------------------------------------------------------------
-# 1. Publish Discovery Metadata for all files in ../metadata/discovery/
+# 1. Publish Discovery Metadata
+#    If site names are passed as arguments, only publish those.
+#    Otherwise, publish all files in the discovery directory.
 # -----------------------------------------------------------------------------
-for site in $(list_discovery_metadata); do
-    publish_metadata $site
+if [ "$#" -gt 0 ]; then
+    print_status "Selective publish: $# file(s) specified"
+    COLLECTIONS=("$@")
+else
+    print_status "No files specified — publishing all discovery metadata"
+    mapfile -t COLLECTIONS < <(list_discovery_metadata)
+fi
+
+for site in "${COLLECTIONS[@]}"; do
+    publish_metadata "$site"
 done
 
 
