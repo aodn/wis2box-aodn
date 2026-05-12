@@ -1,8 +1,9 @@
-name: Deploy the metadata to ecs wis2box-management service and publish wis2 datasets metadata
+name: Publish metadata to non-production (edge) environment
 on:
   push:
     branches:
-      - "main"
+      - "feature/**"
+      - "fix/**"
     paths:
       - 'wis2-pipeline/wis2box-data/metadata/**'
 
