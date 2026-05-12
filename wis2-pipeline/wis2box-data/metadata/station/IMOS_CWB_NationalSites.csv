@@ -1,0 +1,77 @@
+National Coastal Wave Buoy Network,Funding,Type,Latitude,Longitude,Deployment,Data to AusWaves,Data to AODN (direct),Data to AODN (via IMOS CWB),Additional info,WMO ID,WIGOs ID
+Western Australia,,,,,,,,,,,
+Coral Bay,IMOS,National,-23.15446,113.7369,Deployed,Yes,No,Yes,,5601875,0-22000-0-5601875
+Shark Bay,IMOS,National,-25.4945,113.1018,Deployed,Yes,No,Yes,,5601876,0-22000-0-5601876
+Hillarys,IMOS,National,-31.8513,115.6465,Deployed,Yes,No,Yes,,5601873,0-22000-0-5601873
+Ocean Beach,IMOS,National,-35.049,117.3638,Deployed,Yes,No,Yes,,5601874,0-22000-0-5601874
+Torbay West,IMOS,National,-35.0687,117.7699,Deployed,Yes,No,Yes,,5601877,0-22000-0-5601877
+Exmouth Gulf South,UWA,Co-invest,-22.1684,114.338177,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601878,0-22000-0-5601878
+Exmouth Gulf North,UWA,Co-invest,-21.8002,114.266102,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601879,0-22000-0-5601879
+Cygnet Bay,UWA,Co-invest,-16.5028,123.034117,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601880,0-22000-0-5601880
+Cable Beach,UWA,Co-invest,-17.900534,122.133249,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601881,0-22000-0-5601881
+Jurien Bay Inshore,UWA,Co-invest,-30.315,114.9613,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601882,0-22000-0-5601882
+Jurien Bay Offshore,UWA,Co-invest,-30.3156,114.92263,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601883,0-22000-0-5601883
+Dongara Inshore,UWA,Co-invest,-29.186,114.862467,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601884,0-22000-0-5601884
+Dongara Offshore,UWA,Co-invest,-29.198,114.83177,Deployed,Yes,No,Yes,Smart Mooring (buoy data only),5601885,0-22000-0-5601885
+Floreat,UWA,Co-invest,-31.92823,115.68117,Deployed,Yes,No,Yes,,5601886,0-22000-0-5601886
+Cocos Islands North Entrance,OldenDorff Carriers,Co-invest,-12.0878,96.857617,Deployed,Yes,No,Yes,,,
+Cocos Islands Lagoon,Aqualink ,Co-invest,-12.14402,96.86583,Deployed,Yes,No,No,Smart Mooring (buoy data only),,
+,,,,,,,,,,,
+South Australia,,,,,,,,,,,
+Bighton (Gulf St Vincent),IMOS,National,-35.025,138.45,Deployed,Yes,No,Yes,,5501881,0-22000-0-5501881
+North Kangaroo Island (Investigator Strait),IMOS,National,-35.57,136.9255,Deployed,Yes,No,Yes,,5501870,0-22000-0-5501870
+Robe (Southeast),IMOS,National,-37.1443,139.6521,Deployed,Yes,No,Yes,,5501873,0-22000-0-5501873
+Ceduna (Great Australian Bight),IMOS,National,-32.505551,133.173413,Deployed,Yes,No,Yes,,5501877,0-22000-0-5501877
+West Beach (Gulf St Vincent),SA Department for Environment and Water - Adelaide Beach Management Review Initiative (ABMRI),Co-invest,-34.95244,138.48333,Deployed,Yes,No,Yes,,,
+Semaphore (Gulf St Vincent),SA Department for Environment and Water - Adelaide Beach Management Review Initiative (ABMRI),Co-invest,-34.8529,138.35175,Deployed,Yes,No,Yes,,,
+Spilsby South (Southern Spencer Gulf),SA Department for Environment and Water and Local Government Association (LGA) - Climate Ready Coasts Program (CRC),Co-invest,-34.81,136.43,Deployed,Yes,No,Yes,,,
+Black Point (Northern Gulf St Vincent),SA Department for Environment and Water and Local Government Association (LGA) - Climate Ready Coasts Program (CRC),Co-invest,-34.68,138,Deployed,Yes,No,Yes,,,
+Largs Bay (Gulf St Vincent),SA Department for Environment and Water - Adelaide Beach Management Review Initiative (ABMRI),Co-invest,-34.83865,138.430125,,No,No,No,,,
+Northern Spencer Gulf,SA Department for Environment and Water and Local Government Association (LGA) - Climate Ready Coasts Program (CRC),Co-invest,,,,,No,Yes,Name check,,
+Robe Guichen Bay (Robe Inshore),SA Department for Environment and Water & Flinders University,Co-invest,-37.14835,139.77007,Deployed,Yes,No,Yes,,,
+Victor Harbor Offshore,Flinders University,Co-invest,-35.60951,138.63228,Deployed,Yes,No,Yes,,,
+Victor Harbor Inshore,Flinders University,Co-invest,-35.58096,138.61888,Deployed,Yes,No,Yes,,,
+Boston Island (Port Lincoln Tuna farming zone),CSIRO Aquawatch,Co-invest,-34.6557,136.1168,Deployed,Yes,No,Yes,,,
+Cape Jervis,Flinders Ports,Co-invest,-35.606467,138.085267,Deployed,Yes,No,Yes,,,
+,,,,,,,,,,,
+Victoria,,,,,,,,,,,
+Cape Bridgewater,IMOS,National,-38.359917,141.273933,Deployed,Yes,No,Yes,,5501868,0-22000-0-5501868
+Apollo Bay,IMOS,National,-38.753831,143.722773,Deployed,Yes,No,Yes,,5501867,0-22000-0-5501867
+Central (Port Phillip Bay),IMOS,National,-38.062175,144.867225,Deployed,Yes,No,Yes,,5501869,0-22000-0-5501869
+Wilsons Promontory,IMOS,National,-39.537883,146.48335,Deployed,Yes,No,Yes,,5501883,0-22000-0-5501883
+Bob (Southern Offshore Wind Zone),IMOS,National,-38.62557,142.383117,Deployed,Yes,No,Yes,,5501875,0-22000-0-5501875
+Dutton Way,"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-38.320467,141.657333,Deployed,Yes,No,Yes,,,
+Port Fairy,"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-38.382083,142.2872,Deployed,Yes,No,Yes,,,
+Sandringham (Port Philip Bay),"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-37.9793833,144.9931751,Deployed,Yes,No,Yes,,,
+Rosebud (Port Philip Bay),"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-38.302091,144.872422,Deployed,Yes,No,Yes,,,
+Indented Head (Port Philip Bay),"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-38.136123,144.75308,Deployed,Yes,No,Yes,,,
+Mt Elisa (Port Philip Bay),"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-38.16295,145.0543,Deployed,Yes,No,Yes,,,
+Werribee (Port Philip Bay),"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-37.985521,144.775217,Deployed,Yes,No,Yes,,,
+Inverloch,"Victorian Department of Energy, Environment and Climate Action (DEECA)",Co-invest,-38.7574,145.76642,Deployed,Yes,No,Yes,,,
+Lakes Entrance ,Gippsland Ports,Other,,,Deployed,Yes,Yes,No,Triaxys wave buoy ,,
+,,,,,,,,,,,
+Tasmania,,,,,,,,,,,
+Storm Bay,IMOS,National,-43.2308,147.4589,Deployed,Yes,No,Yes,,5501882,0-22000-0-5501882
+,,,,,,,,,,,
+New South Wales,,,,,,,,,,,
+Wooli,IMOS,National,-29.85744,153.31387,Deployed,Yes,No,Yes,,5501874,0-22000-0-5501874
+Collaroy Narrabeen,IMOS,National,-33.72645,151.30682,Deployed,Yes,No,Yes,,5501871,0-22000-0-5501871
+Bengello,IMOS,National,-35.87995,150.1612,Deployed,Yes,No,Yes,,5501876,0-22000-0-5501876
+Tathra,IMOS,National,-36.70827,150.00104,Deployed,Yes,No,Yes,,5501872,0-22000-0-5501872
+Cape Byron,"NSW Department of Climate Change, Energy, the Environment and Water (DCCEEW)",Co-invest,-28.627383,153.627883,,No,Maybe,No,,,
+Wooli Beach,"NSW Department of Climate Change, Energy, the Environment and Water (DCCEEW)",Co-invest,-29.86916,153.27609,,No,Maybe,No,,,
+Boambee Beach,"NSW Department of Climate Change, Energy, the Environment and Water (DCCEEW)",Co-invest,-30.335575,153.124825,,No,Maybe,No,,,
+Crowdy Head,"NSW Department of Climate Change, Energy, the Environment and Water (DCCEEW)",Co-invest,-31.8492,152.7555,,No,Maybe,No,,,
+Stockton,"NSW Department of Climate Change, Energy, the Environment and Water (DCCEEW)",Co-invest,-32.90213,151.79869,,No,Maybe,No,,,
+Port Hacking,"NSW Department of Climate Change, Energy, the Environment and Water (DCCEEW)",Co-invest,-34.07866,151.1539,,No,Maybe,No,,,
+,,,,,,,,,,,
+Queensland,,,,,,,,,,,
+Karumba,IMOS,National,-17.35466,140.72812,Deployed,Yes,No,Yes,,5501879,0-22000-0-5501879
+Mission Beach,IMOS,National,-17.9852167,146.2040333,Deployed,Yes,No,Yes,,5501880,0-22000-0-5501880
+ReefWorks,AIMS,Co-invest,-19.28165,147.0667,Pending,No,Maybe,No,,,
+ReefWorks,AIMS,Co-invest,-19.266,147.06875,Pending,No,Maybe,No,,,
+,,,,,,,,,,,
+Northern Territory,,,,,,,,,,,
+Fenton Patches (Tiwi Islands),IMOS,National,-12.170433,130.7348,Deployed,Yes,No,Yes,,5202531,0-22000-0-5202531
+Maningrida,IMOS,National,-11.95501,134.30939,Deployed,Yes,No,Yes,,5202532,0-22000-0-5202532
+Goodrich Bank,IMOS,National,-10.3156,129.9496,TBC,,,,,,

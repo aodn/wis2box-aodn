@@ -62,8 +62,8 @@ unpublish_metadata(){
     print_status "Unpublishing discovery metadata for $WIS2_BUOY_SITE_NAME ..."
 
     # Unpublish discovery metadata and delete collection
-    wis2box metadata discovery unpublish "urn:wmo:md:au-bom-imos:$WIS2_BUOY_SITE_NAME" && \
-    wis2box data delete-collection "urn:wmo:md:au-bom-imos:$WIS2_BUOY_SITE_NAME" && \
+    wis2box metadata discovery unpublish "urn:wmo:md:au-imos:$WIS2_BUOY_SITE_NAME" && \
+    wis2box data delete-collection "urn:wmo:md:au-imos:$WIS2_BUOY_SITE_NAME" && \
     print_success "$WIS2_BUOY_SITE_NAME metadata unpublished successfully" || \
     print_error "Failed to unpublish $WIS2_BUOY_SITE_NAME metadata"
 }
@@ -106,12 +106,8 @@ done
         # --command "sh" \
         # --interactive
 #
-# 3. Inside the container, run the unpublish commands individually:
-#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-apollo-bay
-#
-# 4. Repeat for other metadata files as needed:
-#    wis2box metadata discovery unpublish /data/wis2box/metadata/discovery/wave-buoy-storm-bay.yml
-#    wis2box data delete-collection urn:wmo:md:au-bom-imos:wave-buoy-storm-bay
+#  Inside the container, run the unpublish commands individually:
+# wis2box metadata discovery unpublish urn:wmo:md:au-imos:wave-buoys
+# wis2box data delete-collection urn:wmo:md:au-imos:wave-buoys
 #
 # =============================================================================

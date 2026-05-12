@@ -75,7 +75,7 @@ print_status "Publishing station metadata for wave buoys..."
 #TODO: if more topics will be published, can refactor codes here to manage weather station metadata.
 wis2box metadata station publish-collection \
     -p /data/wis2box/metadata/station/station_list.csv \
-    -th origin/a/wis2/au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys && print_success "Wave buoy station metadata published successfully" || print_error "Failed to publish station metadata"
+    -th origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys && print_success "Wave buoy station metadata published successfully" || print_error "Failed to publish station metadata"
 
 print_status "Metadata publishing process completed!"
 
@@ -97,13 +97,13 @@ print_status "Metadata publishing process completed!"
         # --interactive
 #
 # 3. Inside the container, run the commands individually:
-#    wis2box data add-collection /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
-#    wis2box metadata discovery publish /data/wis2box/metadata/discovery/wave-buoy-apollo-bay.yml
+#    wis2box data add-collection /data/wis2box/metadata/discovery/wave-buoy.yml
+#    wis2box metadata discovery publish /data/wis2box/metadata/discovery/wave-buoy.yml
 #
 # 4. Repeat for other metadata files as needed
 
 # Note: you need to add topic before publishing station metadata if not done before:
 # run the command below to add topic for wave buoys on wis2box-management container:
-#   wis2box metadata station add-topic origin/a/wis2/au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys
+#   wis2box metadata station add-topic origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys
 
 # =============================================================================

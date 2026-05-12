@@ -20,3 +20,6 @@ wis2-terraform/*.json
 terraform.tfstate.backup
 test.tf
 tmp
+
+# VS Code
+.vscode
