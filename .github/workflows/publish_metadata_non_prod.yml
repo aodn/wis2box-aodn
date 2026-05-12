@@ -26,18 +26,29 @@ jobs:
       - name: Detect changed discovery metadata files
         id: changed
         run: |
-          # Get yml files that were Added (A) or Modified (M) in this push
+          # Discovery metadata: Added or Modified .yml files
           CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD \
             -- 'wis2-pipeline/wis2box-data/metadata/discovery/*.yml' \
             | xargs -r -n1 basename \
             | sed 's/\.yml$//' \
             | tr '\n' ' ' \
-            | xargs)  # trim trailing whitespace
-          echo "files=${CHANGED}" >> "$GITHUB_OUTPUT"
+            | xargs)
+          echo "collections=${CHANGED}" >> "$GITHUB_OUTPUT"
           if [ -z "$CHANGED" ]; then
-            echo "No discovery metadata files changed — skipping publish step"
+            echo "No discovery metadata collections changed"
           else
-            echo "Changed discovery metadata: ${CHANGED}"
+            echo "Changed discovery collections: ${CHANGED}"
+          fi
+
+          # Station metadata: check if station_list.csv was modified
+          STATION_CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD \
+            -- 'wis2-pipeline/wis2box-data/metadata/station/station_list.csv')
+          if [ -n "$STATION_CHANGED" ]; then
+            echo "station_changed=true" >> "$GITHUB_OUTPUT"
+            echo "Station metadata changed: ${STATION_CHANGED}"
+          else
+            echo "station_changed=false" >> "$GITHUB_OUTPUT"
+            echo "Station metadata unchanged"
           fi
 
       - uses: aws-actions/configure-aws-credentials@v5
@@ -74,19 +85,29 @@ jobs:
             --command "sh -c 'cd /data/wis2box/scripts && ./update_metadata.sh'" \
             --interactive
 
-      - name: Publish changed discovery metadata
-        if: steps.changed.outputs.files != ''
+      - name: Publish changed discovery collections
+        if: steps.changed.outputs.collections != ''
         run: |
-          COLLECTION="${{ steps.changed.outputs.files }}"
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
             --cluster wis2box-edge \
             --task "${{ steps.ecs.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && ./publish_metadata.sh ${COLLECTION}'" \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_discovery_metadata.sh ${{ steps.changed.outputs.collections }}'" \
             --interactive
 
-      - name: No discovery metadata changes to publish
-        if: steps.changed.outputs.files == ''
-        run: echo "Only station or non-discovery metadata changed — publish step skipped."
+      - name: Publish changed station metadata
+        if: steps.changed.outputs.station_changed == 'true'
+        run: |
+          unbuffer aws ecs execute-command \
+            --region ap-southeast-2 \
+            --cluster wis2box-edge \
+            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --container wis2box-management \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh'" \
+            --interactive
+
+      - name: No metadata changes to publish
+        if: steps.changed.outputs.collections == '' && steps.changed.outputs.station_changed == 'false'
+        run: echo "No discovery collections or station metadata changed — publish step skipped."
 
