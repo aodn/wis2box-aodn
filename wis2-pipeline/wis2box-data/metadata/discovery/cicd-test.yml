@@ -2,7 +2,7 @@ wis2box:
     retention: P30D
     topic_hierarchy: au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys
     country: AUS
-    centre_id: au-bom-imos
+    centre_id: au-imos
     data_mappings:
         plugins:
             csv:
