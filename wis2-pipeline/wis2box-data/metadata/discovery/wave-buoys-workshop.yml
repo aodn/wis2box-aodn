@@ -1,6 +1,6 @@
 wis2box:
     retention: P30D
-    topic_hierarchy: au-bom-imos/data/core/ocean/surface-based-observations/wave-buoys
+    topic_hierarchy: au-imos/data/core/ocean/surface-based-observations/wave-buoys-workshop
     country: AUS
     centre_id: au-imos
     data_mappings:
@@ -22,14 +22,14 @@ mcf:
     version: 1.0
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:z-cicd-test
+    identifier: urn:wmo:md:au-imos:wave-buoys-workshop
     hierarchylevel: dataset
 
 identification:
-    title: Wave buoy observations made as part of the -- IMOS-WIS2.0
-    abstract: Australian IMOS-WIS2.0 costal wave buoys observation
+    title: Wave buoy observations made as part of the IMOS-WIS2.0 Workshop
+    abstract: Australian IMOS-WIS2.0 coastal wave buoy observations workshop
     dates:
-        creation: 2025-09-04
+        creation: 2026-04-30
     keywords:
         default:
             keywords:
@@ -46,10 +46,10 @@ identification:
                 url: https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline
     extents:
         spatial:
-            - bbox: [147.44728,-43.19308,147.44785,-43.1926]
+            - bbox: [112.00000,-44.00000,155.00000,-10.00000]
               crs: 4326
         temporal:
-            - begin: 2025-08-17
+            - begin: 2026-04-30 # Set the date once productionized
               end: null
               resolution: PT30M # temporal resolution of the data, meaning how frequently observations are collected or reported.
                                 # Every 30 minutes
