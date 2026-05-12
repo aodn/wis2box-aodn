@@ -106,7 +106,3 @@ jobs:
             --container wis2box-management \
             --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh'" \
             --interactive
-
-      - name: No metadata changes to publish
-        if: steps.changed.outputs.collections == '' && steps.changed.outputs.station_changed == 'false'
-        run: echo "No discovery collections or station metadata changed — publish step skipped."
