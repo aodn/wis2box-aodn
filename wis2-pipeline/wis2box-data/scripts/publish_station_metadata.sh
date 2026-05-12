@@ -44,7 +44,7 @@ fi
 print_success "Wave buoy station metadata published successfully!"
 
 # =============================================================================
-# MANUAL ALTERNATIVE
+# MANUAL CMD in the container before first publishing !!!
 # =============================================================================
 # To add a topic before publishing (only needed once):
 #   wis2box metadata station add-topic \
