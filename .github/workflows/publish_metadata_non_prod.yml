@@ -62,12 +62,12 @@ jobs:
         run: |
           TASK_ARN=$(aws ecs list-tasks \
             --cluster wis2box-edge \
-            --family wis2box-management \
+            --family wis2box-edge \
             --desired-status RUNNING \
             --query 'taskArns[0]' \
             --output text)
           if [ -z "$TASK_ARN" ] || [ "$TASK_ARN" = "None" ]; then
-            echo "ERROR: No running wis2box-management task found" >&2
+            echo "ERROR: No running wis2box-edge task found" >&2
             exit 1
           fi
           echo "task_arn=${TASK_ARN}" >> "$GITHUB_OUTPUT"
