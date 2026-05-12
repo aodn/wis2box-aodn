@@ -132,7 +132,17 @@ else
     exit 1
 fi
 
-# Step 6: Verify the copy was successful
+# Step 6: Sync scripts so future workflow runs can invoke them directly
+print_status "Syncing scripts to /data/wis2box/scripts/ ..."
+mkdir -p /data/wis2box/scripts
+if cp wis2box-aodn/wis2-pipeline/wis2box-data/scripts/*.sh /data/wis2box/scripts/ 2>/dev/null; then
+    chmod +x /data/wis2box/scripts/*.sh
+    print_success "Scripts synced successfully"
+else
+    print_warning "Failed to sync scripts (non-fatal)"
+fi
+
+# Step 7: Verify the metadata copy was successful
 if [ -d "/data/wis2box/metadata" ] && [ "$(ls -A /data/wis2box/metadata 2>/dev/null)" ]; then
     print_success "Metadata directory exists and contains files"
 else
@@ -141,7 +151,7 @@ else
     exit 1
 fi
 
-# Step 7: Cleanup temporary files
+# Step 8: Cleanup temporary files
 print_status "Cleaning up temporary files..."
 if rm -rf wis2box-aodn 2>/dev/null; then
     print_success "Temporary files cleaned up"
@@ -149,7 +159,7 @@ else
     print_warning "Failed to clean up some temporary files"
 fi
 
-# Step 8: Remove backup if everything succeeded
+# Step 9: Remove backup if everything succeeded
 if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR" ]; then
     print_status "Removing backup (update successful)..."
     rm -rf "$BACKUP_DIR" 2>/dev/null || print_warning "Failed to remove backup directory"

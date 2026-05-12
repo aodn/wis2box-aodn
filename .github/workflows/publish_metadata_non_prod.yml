@@ -82,7 +82,7 @@ jobs:
             --cluster wis2box-edge \
             --task "${{ steps.ecs.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && DEPLOY_BRANCH=${{ github.ref_name }} ./update_metadata.sh'" \
+            --command "sh -c 'git clone --branch ${{ github.ref_name }} --single-branch https://github.com/aodn/wis2box-aodn.git /tmp/wis2box-deploy && DEPLOY_BRANCH=${{ github.ref_name }} bash /tmp/wis2box-deploy/wis2-pipeline/wis2box-data/scripts/update_metadata.sh && rm -rf /tmp/wis2box-deploy'" \
             --interactive
 
       - name: Publish changed discovery collections
