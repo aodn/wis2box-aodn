@@ -19,7 +19,7 @@ jobs:
   publish-metadata:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 2
 
@@ -51,7 +51,7 @@ jobs:
             echo "Station metadata unchanged"
           fi
 
-      - uses: aws-actions/configure-aws-credentials@v5
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
         with:
           role-to-assume: arn:aws:iam::704910415367:role/wis2-metadata-publication
           #TODO: Granularize the permissions of this IAM role and store the role ARN in GitHub secrets.
