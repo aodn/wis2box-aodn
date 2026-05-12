@@ -96,12 +96,13 @@ else
     exit 1
 fi
 
-# Step 2: Clone the repository
-print_status "Cloning wis2box-aodn repository..."
-if git clone https://github.com/aodn/wis2box-aodn.git 2>/dev/null; then
-    print_success "Repository cloned successfully"
+# Step 2: Clone the repository at the triggering branch
+DEPLOY_BRANCH="${DEPLOY_BRANCH:-main}"
+print_status "Cloning wis2box-aodn repository (branch: $DEPLOY_BRANCH)..."
+if git clone --branch "$DEPLOY_BRANCH" --single-branch https://github.com/aodn/wis2box-aodn.git 2>/dev/null; then
+    print_success "Repository cloned successfully (branch: $DEPLOY_BRANCH)"
 else
-    print_error "Failed to clone repository"
+    print_error "Failed to clone repository (branch: $DEPLOY_BRANCH)"
     restore_backup "$BACKUP_DIR"
     exit 1
 fi

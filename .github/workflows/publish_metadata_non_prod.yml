@@ -82,7 +82,7 @@ jobs:
             --cluster wis2box-edge \
             --task "${{ steps.ecs.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && ./update_metadata.sh'" \
+            --command "sh -c 'cd /data/wis2box/scripts && DEPLOY_BRANCH=${{ github.ref_name }} ./update_metadata.sh'" \
             --interactive
 
       - name: Publish changed discovery collections
