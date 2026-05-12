@@ -19,7 +19,7 @@ jobs:
   publish-metadata:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
@@ -110,4 +110,3 @@ jobs:
       - name: No metadata changes to publish
         if: steps.changed.outputs.collections == '' && steps.changed.outputs.station_changed == 'false'
         run: echo "No discovery collections or station metadata changed — publish step skipped."
-
