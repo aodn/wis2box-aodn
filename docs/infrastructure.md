@@ -201,6 +201,8 @@ The ECS cluster is created with CloudWatch **Container Insights** enabled. It su
 
 The `create_cluster` variable lets you either create a dedicated cluster or attach the service to an existing one by providing its ARN via `cluster_arn`. A `null_resource` precondition enforces that exactly one of these options is set.
 
+**Note:** Although features like 50/50 capacity providers and autoscaling are enabled, they are currently theoretical because the wis2box setup does not support running multiple tasks simultaneously. Any new task will fail if another is already running, as the internal Elasticsearch component is not configured to operate in a cluster. This may be addressed in the future by enabling clustering or by migrating to an external Elasticsearch service.
+
 ### ECS Fargate Service (`service.tf`)
 
 The service runs the WIS2box task definition inside private subnets. Key configuration:
@@ -272,12 +274,6 @@ The `default_cache_policy_id` defaults to the AWS-managed **CachingDisabled** po
 
 ### S3 Buckets (`bucket.tf`)
 
-**Config Bucket** (`appconfig-{app}-{env}`):
-- Always created; holds environment variable files placed in `environment_files/` alongside the Terraform code
-- Files are uploaded as S3 objects with an MD5-hash prefix in the key — Terraform detects content changes and re-uploads automatically
-- The ECS task execution role receives `s3:GetObject` and `s3:GetBucketLocation` permissions on this bucket
-- Files are loaded into the container at startup via the ECS `environmentFiles` mechanism
-
 **Data Bucket** (`data-{app}-{env}`, optional — `enable_data_bucket = true`):
 - The ECS task role receives full CRUD permissions (`GetObject`, `PutObject`, `DeleteObject`, `ListBucket`, etc.)
 - CORS rules can be applied via `data_bucket_cors_rules`
@@ -339,7 +335,7 @@ The module supports three ways to specify the container image:
 
 | Setting | `edge` / `staging` | `production` |
 |---------|--------------------|-------------|
-| Capacity provider | `FARGATE_SPOT` (100%) | `FARGATE` (100%) |
+| Capacity provider | `FARGATE` (100%) | `FARGATE` (100%) |
 | ALB/NLB deletion protection | Disabled | Enabled |
 | CloudFront custom error page | Enabled | Enabled |
 | S3 data bucket `force_destroy` | Enabled | Disabled |
