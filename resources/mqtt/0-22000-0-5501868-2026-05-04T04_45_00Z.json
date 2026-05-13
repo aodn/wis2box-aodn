@@ -1,0 +1,44 @@
+{
+  "id": "c0eeb2c1-94b1-4061-9572-54092284e6a8",
+  "type": "Feature",
+  "conformsTo": [
+    "http://wis.wmo.int/spec/wnm/1/conf/core"
+  ],
+  "geometry": {
+    "coordinates": [
+      141.27528,
+      -38.36165
+    ],
+    "type": "Point"
+  },
+  "properties": {
+    "data_id": "au-imos:wave-buoys/WIGOS_0-22000-0-5501868_20260504T044500",
+    "datetime": "2026-05-04T04:45:00Z",
+    "pubtime": "2026-05-04T05:32:52Z",
+    "integrity": {
+      "method": "sha512",
+      "value": "Cx7nQeC2obH1cw2Mo68W59ltwz0CK8QgYdn+XjUyND6cJwnqXtCGVc0LvJMAAZMRKv9qGG4aP+xOW1rXJbVO8Q=="
+    },
+    "metadata_id": "urn:wmo:md:au-imos:wave-buoys",
+    "content": {
+      "encoding": "base64",
+      "value": "QlVGUgAAegQAABYAAAH//wAAAAZuKQAH6gUEBC0AAAAJAAABgMgPAABPAAIHTP/////////////////v1KIS0nZZ29R0Uf/7VE//////+EwQH/8jf///////gP//////wH//73///+A//////8WgP///////4Dc3Nzc=",
+      "size": 122
+    },
+    "wigos_station_identifier": "0-22000-0-5501868"
+  },
+  "links": [
+    {
+      "rel": "canonical",
+      "type": "application/bufr",
+      "href": "https://wis2box.production.aodn.org.au/data/2026-05-04/wis/urn:wmo:md:au-imos:wave-buoys/WIGOS_0-22000-0-5501868_20260504T044500.bufr4",
+      "length": 122
+    },
+    {
+      "rel": "via",
+      "type": "text/html",
+      "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-22000-0-5501868"
+    }
+  ],
+  "generated_by": "wis2box 1.0.0"
+}

@@ -26,3 +26,6 @@ mqtt_messages/
 
 # VS Code
 .vscode
+
+# Local MQTT messages
+mqtt_messages/
