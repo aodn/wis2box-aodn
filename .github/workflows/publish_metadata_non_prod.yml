@@ -53,8 +53,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v6.1.1
         with:
-          role-to-assume: arn:aws:iam::704910415367:role/wis2-metadata-publication
-          #TODO: Granularize the permissions of this IAM role and store the role ARN in GitHub secrets.
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
           aws-region: ap-southeast-2
 
       - name: Resolve running ECS task ARN
