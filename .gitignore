@@ -21,5 +21,8 @@ terraform.tfstate.backup
 test.tf
 tmp
 
+# MQTT message captures
+mqtt_messages/
+
 # VS Code
 .vscode
