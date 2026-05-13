@@ -23,3 +23,6 @@ tmp
 
 # VS Code
 .vscode
+
+# Local MQTT messages
+mqtt_messages/

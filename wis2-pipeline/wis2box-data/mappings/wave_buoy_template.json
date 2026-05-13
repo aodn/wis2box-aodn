@@ -30,7 +30,7 @@
         },
         {
             "eccodes_key": "bufrHeaderCentre",
-            "value": ""
+            "value": "const:1"
         },
         {
             "eccodes_key": "dataCategory",
