@@ -18,6 +18,7 @@ concurrency:
 jobs:
   publish-metadata-non-production:
     runs-on: ubuntu-latest
+    environment: edge
     steps:
       - uses: actions/checkout@v6
         with:
