@@ -69,6 +69,11 @@ else
 fi
 
 for collection in "${COLLECTIONS[@]}"; do
+    # integration-test collection is non-production only
+    if [ "$collection" = "integration-test" ] && [ "${INCLUDE_INTEGRATION_TEST:-false}" != "true" ]; then
+        print_warning "Skipping integration-test collection (set INCLUDE_INTEGRATION_TEST=true to enable)"
+        continue
+    fi
     publish_collection "$collection"
 done
 

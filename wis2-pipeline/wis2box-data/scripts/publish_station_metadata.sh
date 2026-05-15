@@ -42,22 +42,28 @@ if ! wis2box metadata station list-topics | grep -q "origin/a/wis2/au-imos/data/
     print_success "Topic added successfully!"
 fi
 
-if ! wis2box metadata station list-topics | grep -q "origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test"; then
-    print_status "Adding integration test topic..."
-    if ! wis2box metadata station add-topic \
-        origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
-        print_error "Failed to add integration test topic"
+# Integration test station metadata — non-production only.
+# Set INCLUDE_INTEGRATION_TEST=true to enable (done by the non-prod workflow).
+if [ "${INCLUDE_INTEGRATION_TEST:-false}" = "true" ]; then
+    if ! wis2box metadata station list-topics | grep -q "origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test"; then
+        print_status "Adding integration test topic..."
+        if ! wis2box metadata station add-topic \
+            origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
+            print_error "Failed to add integration test topic"
+            exit 1
+        fi
+        print_success "Integration test topic added successfully!"
+    fi
+
+    if ! wis2box metadata station publish-collection \
+        -p /data/wis2box/metadata/station/integration_test.csv \
+        -th origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
+        print_error "Failed to publish integration test station metadata"
         exit 1
     fi
-    print_success "Integration test topic added successfully!"
-fi
-
-# integration test 
-if ! wis2box metadata station publish-collection \
-    -p /data/wis2box/metadata/station/integration_test.csv \
-    -th origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
-    print_error "Failed to publish station metadata"
-    exit 1
+    print_success "Integration test station metadata published successfully!"
+else
+    print_warning "Skipping integration test station metadata (set INCLUDE_INTEGRATION_TEST=true to enable)"
 fi
 
 

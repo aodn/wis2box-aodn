@@ -55,9 +55,10 @@ jobs:
             echo "Changed discovery collections: ${CHANGED}"
           fi
 
-          # Station metadata: check if station_list.csv was modified
+          # Station metadata: any CSV change triggers a full re-publish of all
+          # hardcoded station files in publish_station_metadata.sh
           STATION_CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD \
-            -- 'wis2-pipeline/wis2box-data/metadata/station/station_list.csv')
+            -- 'wis2-pipeline/wis2box-data/metadata/station/*.csv')
           if [ -n "$STATION_CHANGED" ]; then
             echo "station_changed=true" >> "$GITHUB_OUTPUT"
             echo "Station metadata changed: ${STATION_CHANGED}"
@@ -107,7 +108,7 @@ jobs:
             --cluster wis2box-edge \
             --task "${{ steps.ecs.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && ./publish_discovery_metadata.sh'" \
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh'" \
             --interactive
 
       - name: Publish changed discovery collections
@@ -118,7 +119,7 @@ jobs:
             --cluster wis2box-edge \
             --task "${{ steps.ecs.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && ./publish_discovery_metadata.sh ${{ steps.changed.outputs.collections }}'" \
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh ${{ steps.changed.outputs.collections }}'" \
             --interactive
 
       - name: Publish all station metadata
@@ -129,7 +130,7 @@ jobs:
             --cluster wis2box-edge \
             --task "${{ steps.ecs.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh'" \
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh'" \
             --interactive
 
       - name: Publish changed station metadata
@@ -140,5 +141,5 @@ jobs:
             --cluster wis2box-edge \
             --task "${{ steps.ecs.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh'" \
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh'" \
             --interactive
