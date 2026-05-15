@@ -27,27 +27,35 @@ A `concurrency` group (`metadata-publish`) ensures only one run executes at a ti
 push to feature/** or fix/**
         │
         ▼
+Job: Detect metadata changes
 1. Checkout (fetch-depth: 2)
         │
         ▼
 2. Detect changed files
    ├── discovery/*.yml  →  outputs: collections (space-separated stems)
-   └── station/station_list.csv  →  outputs: station_changed (true/false)
+   └── station/*.csv  →  outputs: station_changed (true/false)
    └── skipped when manual full_publish=true
         │
         ▼
+Job: Resolve running ECS task
 3. Configure AWS credentials (OIDC)
         │
         ▼
 4. Resolve running ECS task ARN dynamically
         │
         ▼
+Job: Update metadata in container
 5. Update metadata in container
    └── Clones the triggering branch into the container via DEPLOY_BRANCH env var
         │
         ▼
+Job: Publish discovery metadata
 6a. Publish changed discovery collections   (skipped if no .yml changed)
-6b. Publish changed station metadata        (skipped if station_list.csv unchanged)
+        │
+        ▼
+
+Job: Publish station metadata
+6b. Publish changed station metadata        (skipped if station/*.csv unchanged)
 
 Manual full_publish=true:
 6a. Publish all discovery collections
@@ -59,8 +67,8 @@ Manual full_publish=true:
 | What changed | Step 6a (discovery) | Step 6b (station) |
 |---|---|---|
 | Only discovery `.yml` files | ✅ Runs — publishes only changed collections | ⏭️ Skipped |
-| Only `station_list.csv` | ⏭️ Skipped | ✅ Runs |
-| Both | ✅ Runs | ✅ Runs |
+| Only station `*.csv` files | ⏭️ Skipped | ✅ Runs |
+| Both | ✅ Runs first | ✅ Runs after discovery succeeds |
 | Neither | ⏭️ Skipped | ⏭️ Skipped |
 
 ### AWS Infrastructure

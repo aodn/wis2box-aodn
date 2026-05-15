@@ -23,9 +23,13 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish-metadata-non-production:
+  detect_metadata_changes:
+    name: Detect metadata changes
     runs-on: ubuntu-latest
-    environment: edge
+    outputs:
+      collections: ${{ steps.changed.outputs.collections }}
+      station_changed: ${{ steps.changed.outputs.station_changed }}
+      full_publish: ${{ steps.changed.outputs.full_publish }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -37,9 +41,11 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.full_publish }}" = "true" ]; then
             echo "collections=" >> "$GITHUB_OUTPUT"
             echo "station_changed=false" >> "$GITHUB_OUTPUT"
+            echo "full_publish=true" >> "$GITHUB_OUTPUT"
             echo "Manual full publish requested; skipping changed-file detection"
             exit 0
           fi
+          echo "full_publish=false" >> "$GITHUB_OUTPUT"
 
           # Discovery metadata: Added or Modified .yml files
           CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD \
@@ -67,6 +73,14 @@ jobs:
             echo "Station metadata unchanged"
           fi
 
+  resolve_ecs_task:
+    name: Resolve running ECS task
+    runs-on: ubuntu-latest
+    environment: edge
+    needs: detect_metadata_changes
+    outputs:
+      task_arn: ${{ steps.ecs.outputs.task_arn }}
+    steps:
       - uses: aws-actions/configure-aws-credentials@v6.1.1
         with:
           role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
@@ -87,6 +101,19 @@ jobs:
           fi
           echo "task_arn=${TASK_ARN}" >> "$GITHUB_OUTPUT"
 
+  update_metadata_in_container:
+    name: Update metadata in container
+    runs-on: ubuntu-latest
+    environment: edge
+    needs:
+      - detect_metadata_changes
+      - resolve_ecs_task
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
+        with:
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
+          aws-region: ap-southeast-2
+
       - name: Install expect
         run: sudo apt-get update && sudo apt-get install -y expect
 
@@ -95,51 +122,93 @@ jobs:
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
             --cluster wis2box-edge \
-            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container wis2box-management \
             --command "sh -c 'git clone --branch ${{ github.ref_name }} --single-branch https://github.com/aodn/wis2box-aodn.git /tmp/wis2box-deploy && DEPLOY_BRANCH=${{ github.ref_name }} bash /tmp/wis2box-deploy/wis2-pipeline/wis2box-data/scripts/update_metadata.sh && rm -rf /tmp/wis2box-deploy'" \
             --interactive
 
+  publish_discovery_metadata:
+    name: Publish discovery metadata
+    runs-on: ubuntu-latest
+    environment: edge
+    needs:
+      - detect_metadata_changes
+      - resolve_ecs_task
+      - update_metadata_in_container
+    if: needs.detect_metadata_changes.outputs.full_publish == 'true' || needs.detect_metadata_changes.outputs.collections != ''
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
+        with:
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
+          aws-region: ap-southeast-2
+
+      - name: Install expect
+        run: sudo apt-get update && sudo apt-get install -y expect
+
       - name: Publish all discovery collections
-        if: github.event_name == 'workflow_dispatch' && inputs.full_publish
+        if: needs.detect_metadata_changes.outputs.full_publish == 'true'
         run: |
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
             --cluster wis2box-edge \
-            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container wis2box-management \
             --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh'" \
             --interactive
 
       - name: Publish changed discovery collections
-        if: steps.changed.outputs.collections != '' && !(github.event_name == 'workflow_dispatch' && inputs.full_publish)
+        if: needs.detect_metadata_changes.outputs.full_publish != 'true'
         run: |
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
             --cluster wis2box-edge \
-            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container wis2box-management \
-            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh ${{ steps.changed.outputs.collections }}'" \
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh ${{ needs.detect_metadata_changes.outputs.collections }}'" \
             --interactive
 
+  publish_station_metadata:
+    name: Publish station metadata
+    runs-on: ubuntu-latest
+    environment: edge
+    needs:
+      - detect_metadata_changes
+      - resolve_ecs_task
+      - update_metadata_in_container
+      - publish_discovery_metadata
+    if: |
+      always() &&
+      (needs.detect_metadata_changes.outputs.full_publish == 'true' || needs.detect_metadata_changes.outputs.station_changed == 'true') &&
+      needs.resolve_ecs_task.result == 'success' &&
+      needs.update_metadata_in_container.result == 'success' &&
+      (needs.publish_discovery_metadata.result == 'success' || needs.publish_discovery_metadata.result == 'skipped')
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
+        with:
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
+          aws-region: ap-southeast-2
+
+      - name: Install expect
+        run: sudo apt-get update && sudo apt-get install -y expect
+
       - name: Publish all station metadata
-        if: github.event_name == 'workflow_dispatch' && inputs.full_publish
+        if: needs.detect_metadata_changes.outputs.full_publish == 'true'
         run: |
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
             --cluster wis2box-edge \
-            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container wis2box-management \
             --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh'" \
             --interactive
 
       - name: Publish changed station metadata
-        if: steps.changed.outputs.station_changed == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.full_publish)
+        if: needs.detect_metadata_changes.outputs.full_publish != 'true'
         run: |
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
             --cluster wis2box-edge \
-            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container wis2box-management \
             --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh'" \
             --interactive

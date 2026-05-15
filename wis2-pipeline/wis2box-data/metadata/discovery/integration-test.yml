@@ -22,7 +22,7 @@ mcf:
     version: 1.0
 
 metadata:
-    identifier: urn:wmo:md:au-bom-imos:integration-test
+    identifier: urn:wmo:md:au-imos:integration-test
     hierarchylevel: dataset
 
 identification:
