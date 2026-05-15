@@ -1,6 +1,6 @@
 wis2box:
     retention: P30D
-    topic_hierarchy: au-bom-imos/data/core/ocean/surface-based-observations/integration-test
+    topic_hierarchy: au-imos/data/core/ocean/surface-based-observations/integration-test
     country: AUS
     centre_id: au-imos
     data_mappings:
