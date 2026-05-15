@@ -84,6 +84,40 @@ Manual full_publish=true:
 
 ---
 
+## `publish_metadata_prod.yml` — Publish Metadata to Production
+
+### Purpose
+
+Automatically deploys production discovery and station metadata to the **production wis2box environment** when metadata changes land on `main`. Integration test metadata is excluded from production publishing.
+
+### Trigger
+
+| Event | Branches | Path filter |
+|-------|----------|-------------|
+| `push` | `main` | `wis2-pipeline/wis2box-data/metadata/**` |
+| `workflow_dispatch` | selected manually | none |
+
+Manual runs support `full_publish=true`, which publishes all production discovery metadata and station metadata. The workflow does not set `INCLUDE_INTEGRATION_TEST=true`, so `integration-test.yml` and `integration_test.csv` are skipped by the publish scripts.
+
+### Production Exclusions
+
+- `metadata/discovery/integration-test.yml` is filtered out during changed-file detection.
+- `metadata/station/integration_test.csv` is filtered out during changed-file detection.
+- If only integration test metadata changes, the production workflow stops after the detect job.
+- Full publish still relies on the scripts' default behavior, which skips integration test metadata unless `INCLUDE_INTEGRATION_TEST=true` is set.
+
+### AWS Infrastructure
+
+| Resource | Value |
+|----------|-------|
+| AWS Region | `ap-southeast-2` |
+| ECS Cluster | `wis2box-production` |
+| ECS Task Family | `wis2box-production` |
+| ECS Container | `wis2box-management` |
+| IAM Role | GitHub Environment Variable `METADATA_PUBLICATION_IAM_ROLE` in the `production` environment |
+
+---
+
 ## Corresponding Scripts
 
 All scripts live in `wis2-pipeline/wis2box-data/scripts/` and run **inside the `wis2box-management` ECS container**.
@@ -126,13 +160,3 @@ Publishes station metadata (`station_list.csv`) to wis2box, associating stations
 ```bash
 ./publish_station_metadata.sh
 ```
-
----
-
-## Adding a New Production Workflow
-
-When the production environment is ready, create `.github/workflows/publish_metadata_prod.yml` following the same structure but with:
-
-- `branches: ["main"]`
-- The production ECS cluster name and AWS account
-- A separate IAM role scoped to the production account
