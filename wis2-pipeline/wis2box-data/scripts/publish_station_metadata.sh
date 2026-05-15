@@ -31,30 +31,10 @@ print_error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 
 print_status "Starting station metadata publishing..."
 
-# Add topic if not exist (only needed once)
-if ! wis2box metadata station list-topics | grep -q "origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys"; then
-    print_status "Adding topic..."
-    if ! wis2box metadata station add-topic \
-        origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys; then
-        print_error "Failed to add topic"
-        exit 1
-    fi
-    print_success "Topic added successfully!"
-fi
-
 # Integration test station metadata — non-production only.
 # Set INCLUDE_INTEGRATION_TEST=true to enable (done by the non-prod workflow).
 if [ "${INCLUDE_INTEGRATION_TEST:-false}" = "true" ]; then
-    if ! wis2box metadata station list-topics | grep -q "origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test"; then
-        print_status "Adding integration test topic..."
-        if ! wis2box metadata station add-topic \
-            origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
-            print_error "Failed to add integration test topic"
-            exit 1
-        fi
-        print_success "Integration test topic added successfully!"
-    fi
-
+    print_status "Publishing integration test station metadata..."
     if ! wis2box metadata station publish-collection \
         -p /data/wis2box/metadata/station/integration_test.csv \
         -th origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
@@ -82,7 +62,12 @@ print_success "Wave buoy station metadata published successfully!"
 # =============================================================================
 # MANUAL CMD in the container before first publishing !!!
 # =============================================================================
-# To add a topic before publishing (only needed once):
+
+## Add integration test topic (only needed once):
+#   wis2box metadata station add-topic \
+#     origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test
+# 
+## To add a new topic before publishing (only needed once):
 #   wis2box metadata station add-topic \
 #     origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys
 # =============================================================================
