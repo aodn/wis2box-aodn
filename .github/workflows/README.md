@@ -11,8 +11,11 @@ Automatically deploys dataset discovery metadata and station metadata to the **n
 | Event | Branches | Path filter |
 |-------|----------|-------------|
 | `push` | `feature/**`, `fix/**` | `wis2-pipeline/wis2box-data/metadata/**` |
+| `workflow_dispatch` | selected manually | none |
 
 > `main` is intentionally excluded — production deployments will be handled by a separate workflow.
+
+Manual runs support a `full_publish` input. When enabled, the workflow updates the metadata files from the selected branch, publishes all discovery metadata, and publishes station metadata. This is intended for recovery after a failed run or an ECS outage.
 
 ### Concurrency
 
@@ -30,6 +33,7 @@ push to feature/** or fix/**
 2. Detect changed files
    ├── discovery/*.yml  →  outputs: collections (space-separated stems)
    └── station/station_list.csv  →  outputs: station_changed (true/false)
+   └── skipped when manual full_publish=true
         │
         ▼
 3. Configure AWS credentials (OIDC)
@@ -44,6 +48,10 @@ push to feature/** or fix/**
         ▼
 6a. Publish changed discovery collections   (skipped if no .yml changed)
 6b. Publish changed station metadata        (skipped if station_list.csv unchanged)
+
+Manual full_publish=true:
+6a. Publish all discovery collections
+6b. Publish station metadata
 ```
 
 ### Publish logic
@@ -62,7 +70,7 @@ push to feature/** or fix/**
 | AWS Region | `ap-southeast-2` |
 | ECS Cluster | `wis2box-edge` |
 | ECS Container | `wis2box-management` |
-| IAM Role | `arn:aws:iam::704910415367:role/wis2-metadata-publication` |
+| IAM Role | GitHub Environment Variables |
 
 > The ECS task ARN is resolved dynamically at runtime — it is not hardcoded.
 

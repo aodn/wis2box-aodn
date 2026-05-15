@@ -1,5 +1,12 @@
 name: Publish metadata to non-production (edge) environment
 on:
+  workflow_dispatch:
+    inputs:
+      full_publish:
+        description: "Publish all discovery and station metadata"
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - "feature/**"
@@ -27,6 +34,13 @@ jobs:
       - name: Detect changed discovery metadata files
         id: changed
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.full_publish }}" = "true" ]; then
+            echo "collections=" >> "$GITHUB_OUTPUT"
+            echo "station_changed=false" >> "$GITHUB_OUTPUT"
+            echo "Manual full publish requested; skipping changed-file detection"
+            exit 0
+          fi
+
           # Discovery metadata: Added or Modified .yml files
           CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD \
             -- 'wis2-pipeline/wis2box-data/metadata/discovery/*.yml' \
@@ -85,8 +99,19 @@ jobs:
             --command "sh -c 'git clone --branch ${{ github.ref_name }} --single-branch https://github.com/aodn/wis2box-aodn.git /tmp/wis2box-deploy && DEPLOY_BRANCH=${{ github.ref_name }} bash /tmp/wis2box-deploy/wis2-pipeline/wis2box-data/scripts/update_metadata.sh && rm -rf /tmp/wis2box-deploy'" \
             --interactive
 
+      - name: Publish all discovery collections
+        if: github.event_name == 'workflow_dispatch' && inputs.full_publish
+        run: |
+          unbuffer aws ecs execute-command \
+            --region ap-southeast-2 \
+            --cluster wis2box-edge \
+            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --container wis2box-management \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_discovery_metadata.sh'" \
+            --interactive
+
       - name: Publish changed discovery collections
-        if: steps.changed.outputs.collections != ''
+        if: steps.changed.outputs.collections != '' && !(github.event_name == 'workflow_dispatch' && inputs.full_publish)
         run: |
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
@@ -96,8 +121,19 @@ jobs:
             --command "sh -c 'cd /data/wis2box/scripts && ./publish_discovery_metadata.sh ${{ steps.changed.outputs.collections }}'" \
             --interactive
 
+      - name: Publish all station metadata
+        if: github.event_name == 'workflow_dispatch' && inputs.full_publish
+        run: |
+          unbuffer aws ecs execute-command \
+            --region ap-southeast-2 \
+            --cluster wis2box-edge \
+            --task "${{ steps.ecs.outputs.task_arn }}" \
+            --container wis2box-management \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh'" \
+            --interactive
+
       - name: Publish changed station metadata
-        if: steps.changed.outputs.station_changed == 'true'
+        if: steps.changed.outputs.station_changed == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.full_publish)
         run: |
           unbuffer aws ecs execute-command \
             --region ap-southeast-2 \
