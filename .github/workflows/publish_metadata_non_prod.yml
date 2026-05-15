@@ -1,5 +1,7 @@
 name: Publish metadata to non-production (edge) environment
 on:
+  # Manual recovery path: run this after an ECS outage or failed publish.
+  # Set full_publish=true to republish all metadata from the selected branch.
   workflow_dispatch:
     inputs:
       full_publish:

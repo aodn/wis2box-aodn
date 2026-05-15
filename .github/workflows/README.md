@@ -17,6 +17,8 @@ Automatically deploys dataset discovery metadata and station metadata to the **n
 
 Manual runs support a `full_publish` input. When enabled, the workflow updates the metadata files from the selected branch, publishes all discovery metadata, and publishes station metadata. This is intended for recovery after a failed run or an ECS outage.
 
+This workflow includes integration test metadata. The integration test dataset is a controlled non-production dataset used to verify that metadata publishing works through GitHub Actions, the wis2box CLI, and the expected WIS2 topic hierarchy without touching production records. See [`docs/intergration_test.md`](../../docs/intergration_test.md) for details.
+
 ### Concurrency
 
 A `concurrency` group (`metadata-publish`) ensures only one run executes at a time. In-progress runs are **not** cancelled — the next run queues and waits.
@@ -98,6 +100,8 @@ Automatically deploys production discovery and station metadata to the **product
 | `workflow_dispatch` | selected manually | none |
 
 Manual runs support `full_publish=true`, which publishes all production discovery metadata and station metadata. The workflow does not set `INCLUDE_INTEGRATION_TEST=true`, so `integration-test.yml` and `integration_test.csv` are skipped by the publish scripts.
+
+The integration test dataset is intentionally non-production only. It exists to validate workflow and publishing behavior repeatedly in edge while keeping production clean. See [`docs/intergration_test.md`](../../docs/intergration_test.md) for the rationale and controls.
 
 ### Production Exclusions
 
