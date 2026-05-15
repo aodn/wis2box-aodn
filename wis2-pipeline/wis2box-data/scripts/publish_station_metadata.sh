@@ -31,6 +31,36 @@ print_error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 
 print_status "Starting station metadata publishing..."
 
+# Add topic if not exist (only needed once)
+if ! wis2box metadata station list-topics | grep -q "origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys"; then
+    print_status "Adding topic..."
+    if ! wis2box metadata station add-topic \
+        origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/wave-buoys; then
+        print_error "Failed to add topic"
+        exit 1
+    fi
+    print_success "Topic added successfully!"
+fi
+
+if ! wis2box metadata station list-topics | grep -q "origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test"; then
+    print_status "Adding integration test topic..."
+    if ! wis2box metadata station add-topic \
+        origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
+        print_error "Failed to add integration test topic"
+        exit 1
+    fi
+    print_success "Integration test topic added successfully!"
+fi
+
+# integration test 
+if ! wis2box metadata station publish-collection \
+    -p /data/wis2box/metadata/station/integration_test.csv \
+    -th origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
+    print_error "Failed to publish station metadata"
+    exit 1
+fi
+
+
 # TODO: if more topics will be published, refactor here to loop over topics.
 print_status "Publishing station metadata for wave buoys..."
 
