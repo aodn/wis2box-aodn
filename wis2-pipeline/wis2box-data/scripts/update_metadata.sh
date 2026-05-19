@@ -46,29 +46,30 @@ trap cleanup EXIT ERR
 
 # Function to backup existing metadata
 backup_metadata() {
-    local backup_dir="/tmp/wis2box-metadata-backup-$(date +%Y%m%d_%H%M%S)"
+    local backup_root="/tmp/wis2box-metadata-backup-$(date +%Y%m%d_%H%M%S)"
 
     if [ -d "/data/wis2box/metadata/" ]; then
-        print_status "Creating backup of existing metadata..."
-        if cp -r /data/wis2box/metadata/ "$backup_dir" 2>/dev/null; then
-            print_success "Backup created at: $backup_dir"
-            echo "$backup_dir"
+        print_status "Creating backup of existing metadata..." >&2
+        if mkdir -p "$backup_root" && cp -r /data/wis2box/metadata "$backup_root" 2>/dev/null; then
+            print_success "Backup created at: $backup_root" >&2
+            echo "$backup_root"
         else
-            print_error "Failed to create backup"
+            print_error "Failed to create backup" >&2
             return 1
         fi
     else
-        print_warning "No existing metadata directory to backup"
+        print_warning "No existing metadata directory to backup" >&2
         echo ""
     fi
 }
 
 # Function to restore from backup
 restore_backup() {
-    local backup_dir="$1"
-    if [ -n "$backup_dir" ] && [ -d "$backup_dir" ]; then
+    local backup_root="$1"
+    local metadata_backup="${backup_root%/}/metadata"
+    if [ -n "$backup_root" ] && [ -d "$metadata_backup" ]; then
         print_warning "Restoring from backup..."
-        if cp -r "$backup_dir"/* /data/wis2box/ 2>/dev/null; then
+        if cp -r "$metadata_backup" /data/wis2box/ 2>/dev/null; then
             print_success "Metadata restored from backup"
         else
             print_error "Failed to restore from backup"
@@ -134,7 +135,6 @@ fi
 
 # Step 6: Sync scripts so future workflow runs can invoke them directly
 print_status "Syncing scripts to /data/wis2box/scripts/ ..."
-mkdir -p /data/wis2box/scripts
 if cp wis2box-aodn/wis2-pipeline/wis2box-data/scripts/*.sh /data/wis2box/scripts/ 2>/dev/null; then
     chmod +x /data/wis2box/scripts/*.sh
     print_success "Scripts synced successfully"
