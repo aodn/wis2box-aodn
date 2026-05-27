@@ -1,8 +1,8 @@
 station_name,wigos_station_identifier,traditional_station_identifier,facility_type,latitude,longitude,elevation,barometer_height,territory_name,wmo_region
 APOLLO-BAY,0-22000-0-7811080,7811080,seaFixed,-38.7541,143.7232,0,0,AUS,southWestPacific
 STORM-BAY,0-22000-0-5501882,5501882,seaFixed,-43.2308,147.4589,0,0,AUS,southWestPacific
-CORAL-BAY,0-22000-0-5601875,5601875,seaFixed,-23.15446,113.7369,0,0,AUS,southWestPacific
-SHARK-BAY,0-22000-0-5601876,5601876,seaFixed,-25.4945,113.1018,0,0,AUS,southWestPacific
+CORAL-BAY,0-22000-0-5601875,5601875,seaFixed,-22.73264,113.90759,0,0,AUS,southWestPacific
+SHARK-BAY,0-22000-0-5601876,5601876,seaFixed,-25.4934,113.0962,0,0,AUS,southWestPacific
 HILLARYS,0-22000-0-5601873,5601873,seaFixed,-31.8513,115.6465,0,0,AUS,southWestPacific
 OCEAN-BEACH,0-22000-0-5601874,5601874,seaFixed,-35.049,117.3638,0,0,AUS,southWestPacific
 TORBAY-WEST,0-22000-0-5601877,5601877,seaFixed,-35.0687,117.7699,0,0,AUS,southWestPacific
