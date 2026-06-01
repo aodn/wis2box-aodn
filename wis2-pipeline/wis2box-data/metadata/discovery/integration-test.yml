@@ -49,7 +49,7 @@ identification:
             - bbox: [147.44728,-43.19308,147.44785,-43.1926]
               crs: 4326
         temporal:
-            - begin: 2025-08-23
+            - begin: 2025-08-24
               end: null
               resolution: PT30M # temporal resolution of the data, meaning how frequently observations are collected or reported.
                                 # Every 30 minutes
