@@ -1,2 +1,2 @@
 station_name,wigos_station_identifier,traditional_station_identifier,facility_type,latitude,longitude,elevation,barometer_height,territory_name,wmo_region
-TEST,0-22000-0-1111111,1111111,seaFixed,-11.95501,134.30800,0,0,AUS,southWestPacific
+TEST,0-22000-0-1111111,1111111,seaFixed,-11.9800,134.30800,0,0,AUS,southWestPacific
