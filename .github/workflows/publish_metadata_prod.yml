@@ -1,0 +1,225 @@
+name: Publish metadata to production environment
+on:
+  # Manual recovery path: run this after an ECS outage or failed publish.
+  # Set full_publish=true to republish all production metadata from main.
+  workflow_dispatch:
+    inputs:
+      full_publish:
+        description: "Publish all production discovery and station metadata"
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches:
+      - "main"
+    paths:
+      - 'wis2-pipeline/wis2box-data/metadata/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: wis2-metadata-publish-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-southeast-2
+  ECS_CLUSTER: wis2box-production
+  ECS_FAMILY: wis2box-production
+  ECS_CONTAINER: wis2box-management
+
+jobs:
+  detect_metadata_changes:
+    name: Detect metadata changes
+    runs-on: ubuntu-latest
+    outputs:
+      collections: ${{ steps.changed.outputs.collections }}
+      station_changed: ${{ steps.changed.outputs.station_changed }}
+      full_publish: ${{ steps.changed.outputs.full_publish }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed production metadata files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.full_publish }}" = "true" ]; then
+            echo "collections=" >> "$GITHUB_OUTPUT"
+            echo "station_changed=false" >> "$GITHUB_OUTPUT"
+            echo "full_publish=true" >> "$GITHUB_OUTPUT"
+            echo "Manual full publish requested; skipping changed-file detection"
+            exit 0
+          fi
+          echo "full_publish=false" >> "$GITHUB_OUTPUT"
+
+          # Discovery metadata: Added or Modified .yml files.
+          # integration-test is intentionally excluded from production.
+          CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD \
+            -- 'wis2-pipeline/wis2box-data/metadata/discovery/*.yml' \
+            | xargs -r -n1 basename \
+            | sed 's/\.yml$//' \
+            | grep -v '^integration-test$' \
+            | tr '\n' ' ' \
+            | xargs)
+          echo "collections=${CHANGED}" >> "$GITHUB_OUTPUT"
+          if [ -z "$CHANGED" ]; then
+            echo "No production discovery metadata collections changed"
+          else
+            echo "Changed production discovery collections: ${CHANGED}"
+          fi
+
+          # Station metadata: integration_test.csv is intentionally excluded
+          # from production.
+          STATION_CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD \
+            -- 'wis2-pipeline/wis2box-data/metadata/station/*.csv' \
+            | grep -v '/integration_test\.csv$' || true)
+          if [ -n "$STATION_CHANGED" ]; then
+            echo "station_changed=true" >> "$GITHUB_OUTPUT"
+            echo "Production station metadata changed: ${STATION_CHANGED}"
+          else
+            echo "station_changed=false" >> "$GITHUB_OUTPUT"
+            echo "Production station metadata unchanged"
+          fi
+
+  resolve_ecs_task:
+    name: Resolve running ECS task
+    runs-on: ubuntu-latest
+    environment: production
+    needs: detect_metadata_changes
+    if: needs.detect_metadata_changes.outputs.full_publish == 'true' || needs.detect_metadata_changes.outputs.collections != '' || needs.detect_metadata_changes.outputs.station_changed == 'true'
+    outputs:
+      task_arn: ${{ steps.ecs.outputs.task_arn }}
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
+        with:
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Resolve running ECS task ARN
+        id: ecs
+        run: |
+          TASK_ARN=$(aws ecs list-tasks \
+            --cluster "$ECS_CLUSTER" \
+            --family "$ECS_FAMILY" \
+            --desired-status RUNNING \
+            --query 'taskArns[0]' \
+            --output text)
+          if [ -z "$TASK_ARN" ] || [ "$TASK_ARN" = "None" ]; then
+            echo "ERROR: No running $ECS_FAMILY task found in $ECS_CLUSTER" >&2
+            exit 1
+          fi
+          echo "task_arn=${TASK_ARN}" >> "$GITHUB_OUTPUT"
+
+  update_metadata_in_container:
+    name: Update metadata in container
+    runs-on: ubuntu-latest
+    environment: production
+    needs:
+      - detect_metadata_changes
+      - resolve_ecs_task
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
+        with:
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install expect
+        run: sudo apt-get update && sudo apt-get install -y expect
+
+      - name: Update metadata files in container
+        run: |
+          unbuffer aws ecs execute-command \
+            --region "$AWS_REGION" \
+            --cluster "$ECS_CLUSTER" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
+            --container "$ECS_CONTAINER" \
+            --command "sh -c 'git clone --branch ${{ github.ref_name }} --single-branch https://github.com/aodn/wis2box-aodn.git /tmp/wis2box-deploy && DEPLOY_BRANCH=${{ github.ref_name }} bash /tmp/wis2box-deploy/wis2-pipeline/wis2box-data/scripts/update_metadata.sh && rm -rf /tmp/wis2box-deploy'" \
+            --interactive
+
+  publish_discovery_metadata:
+    name: Publish discovery metadata
+    runs-on: ubuntu-latest
+    environment: production
+    needs:
+      - detect_metadata_changes
+      - resolve_ecs_task
+      - update_metadata_in_container
+    if: needs.detect_metadata_changes.outputs.full_publish == 'true' || needs.detect_metadata_changes.outputs.collections != ''
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
+        with:
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install expect
+        run: sudo apt-get update && sudo apt-get install -y expect
+
+      - name: Publish all discovery collections
+        if: needs.detect_metadata_changes.outputs.full_publish == 'true'
+        run: |
+          unbuffer aws ecs execute-command \
+            --region "$AWS_REGION" \
+            --cluster "$ECS_CLUSTER" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
+            --container "$ECS_CONTAINER" \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_discovery_metadata.sh'" \
+            --interactive
+
+      - name: Publish changed discovery collections
+        if: needs.detect_metadata_changes.outputs.full_publish != 'true'
+        run: |
+          unbuffer aws ecs execute-command \
+            --region "$AWS_REGION" \
+            --cluster "$ECS_CLUSTER" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
+            --container "$ECS_CONTAINER" \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_discovery_metadata.sh ${{ needs.detect_metadata_changes.outputs.collections }}'" \
+            --interactive
+
+  publish_station_metadata:
+    name: Publish station metadata
+    runs-on: ubuntu-latest
+    environment: production
+    needs:
+      - detect_metadata_changes
+      - resolve_ecs_task
+      - update_metadata_in_container
+      - publish_discovery_metadata
+    if: |
+      always() &&
+      (needs.detect_metadata_changes.outputs.full_publish == 'true' || needs.detect_metadata_changes.outputs.station_changed == 'true') &&
+      needs.resolve_ecs_task.result == 'success' &&
+      needs.update_metadata_in_container.result == 'success' &&
+      (needs.publish_discovery_metadata.result == 'success' || needs.publish_discovery_metadata.result == 'skipped')
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
+        with:
+          role-to-assume: ${{ vars.METADATA_PUBLICATION_IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install expect
+        run: sudo apt-get update && sudo apt-get install -y expect
+
+      - name: Publish all station metadata
+        if: needs.detect_metadata_changes.outputs.full_publish == 'true'
+        run: |
+          unbuffer aws ecs execute-command \
+            --region "$AWS_REGION" \
+            --cluster "$ECS_CLUSTER" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
+            --container "$ECS_CONTAINER" \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh'" \
+            --interactive
+
+      - name: Publish changed station metadata
+        if: needs.detect_metadata_changes.outputs.full_publish != 'true'
+        run: |
+          unbuffer aws ecs execute-command \
+            --region "$AWS_REGION" \
+            --cluster "$ECS_CLUSTER" \
+            --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
+            --container "$ECS_CONTAINER" \
+            --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh'" \
+            --interactive
