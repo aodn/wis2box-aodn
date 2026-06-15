@@ -132,8 +132,9 @@ jobs:
             --cluster "$ECS_CLUSTER" \
             --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container "$ECS_CONTAINER" \
-            --command "sh -c 'git clone --branch ${{ github.ref_name }} --single-branch https://github.com/aodn/wis2box-aodn.git /tmp/wis2box-deploy && DEPLOY_BRANCH=${{ github.ref_name }} bash /tmp/wis2box-deploy/wis2-pipeline/wis2box-data/scripts/update_metadata.sh && rm -rf /tmp/wis2box-deploy'" \
-            --interactive
+            --command "sh -c 'git clone --branch ${{ github.ref_name }} --single-branch https://github.com/aodn/wis2box-aodn.git /tmp/wis2box-deploy && DEPLOY_BRANCH=${{ github.ref_name }} bash /tmp/wis2box-deploy/wis2-pipeline/wis2box-data/scripts/update_metadata.sh && rm -rf /tmp/wis2box-deploy; echo \"ECS_EXEC_EXIT_CODE:\$?\"'" \
+            --interactive | tee output.log
+          ! grep -E "\[ERROR\]|ERROR:|Error:|Exception" output.log && grep -q "ECS_EXEC_EXIT_CODE:0" output.log
 
   publish_discovery_metadata:
     name: Publish discovery metadata
@@ -161,8 +162,9 @@ jobs:
             --cluster "$ECS_CLUSTER" \
             --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container "$ECS_CONTAINER" \
-            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh'" \
-            --interactive
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh; echo \"ECS_EXEC_EXIT_CODE:\$?\"'" \
+            --interactive | tee output.log
+          ! grep -E "\[ERROR\]|ERROR:|Error:|Exception" output.log && grep -q "ECS_EXEC_EXIT_CODE:0" output.log
 
       - name: Publish changed discovery collections
         if: needs.detect_metadata_changes.outputs.full_publish != 'true'
@@ -172,8 +174,9 @@ jobs:
             --cluster "$ECS_CLUSTER" \
             --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container "$ECS_CONTAINER" \
-            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh ${{ needs.detect_metadata_changes.outputs.collections }}'" \
-            --interactive
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_discovery_metadata.sh ${{ needs.detect_metadata_changes.outputs.collections }}; echo \"ECS_EXEC_EXIT_CODE:\$?\"'" \
+            --interactive | tee output.log
+          ! grep -E "\[ERROR\]|ERROR:|Error:|Exception" output.log && grep -q "ECS_EXEC_EXIT_CODE:0" output.log
 
   publish_station_metadata:
     name: Publish station metadata
@@ -207,8 +210,9 @@ jobs:
             --cluster "$ECS_CLUSTER" \
             --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container "$ECS_CONTAINER" \
-            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh'" \
-            --interactive
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh; echo \"ECS_EXEC_EXIT_CODE:\$?\"'" \
+            --interactive | tee output.log
+          ! grep -E "\[ERROR\]|ERROR:|Error:|Exception" output.log && grep -q "ECS_EXEC_EXIT_CODE:0" output.log
 
       - name: Publish changed station metadata
         if: needs.detect_metadata_changes.outputs.full_publish != 'true'
@@ -218,5 +222,6 @@ jobs:
             --cluster "$ECS_CLUSTER" \
             --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container "$ECS_CONTAINER" \
-            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh'" \
-            --interactive
+            --command "sh -c 'cd /data/wis2box/scripts && INCLUDE_INTEGRATION_TEST=true ./publish_station_metadata.sh; echo \"ECS_EXEC_EXIT_CODE:\$?\"'" \
+            --interactive | tee output.log
+          ! grep -E "\[ERROR\]|ERROR:|Error:|Exception" output.log && grep -q "ECS_EXEC_EXIT_CODE:0" output.log
