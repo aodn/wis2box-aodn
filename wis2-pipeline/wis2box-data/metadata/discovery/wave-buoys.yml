@@ -50,6 +50,8 @@ identification:
               crs: 4326
         temporal:
             - begin: 2025-09-30 # Set the date once productionized
+        temporal:
+            - begin: 2025-09-30 # Set the date once productionized
               end: null
               resolution: PT30M # temporal resolution of the data, meaning how frequently observations are collected or reported.
                                 # Every 30 minutes
