@@ -49,7 +49,7 @@ identification:
             - bbox: [112.00000,-44.00000,155.00000,-10.00000]
               crs: 4326
         temporal:
-            - begin: 2025-09-30 # Set the date once productionized
+            - begin: 2026-01-30 # Set the date once productionized
               end: null
               resolution: PT30M # temporal resolution of the data, meaning how frequently observations are collected or reported.
                                 # Every 30 minutes
