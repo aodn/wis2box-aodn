@@ -1,5 +1,5 @@
 station_name,wigos_station_identifier,traditional_station_identifier,facility_type,latitude,longitude,elevation,barometer_height,territory_name,wmo_region
-APOLLO-BAY,0-22000-0-7811080,7811080,seaFixed,-38.7600,143.7232,0,0,AUS,southWestPacific
+APOLLO-BAY,0-22000-0-7811080,7811080,seaFixed,-38.7650,143.7232,0,0,AUS,southWestPacific
 STORM-BAY,0-22000-0-5501882,5501882,seaFixed,-43.2308,147.4589,0,0,AUS,southWestPacific
 CORAL-BAY,0-22000-0-5601875,5601875,seaFixed,-22.73264,113.90759,0,0,AUS,southWestPacific
 SHARK-BAY,0-22000-0-5601876,5601876,seaFixed,-25.4934,113.0962,0,0,AUS,southWestPacific
