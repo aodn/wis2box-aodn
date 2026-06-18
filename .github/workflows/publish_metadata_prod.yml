@@ -226,5 +226,5 @@ jobs:
             --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container "$ECS_CONTAINER" \
             --command "sh -c 'cd /data/wis2box/scripts && ./publish_station_metadata.sh; echo \"ECS_EXEC_EXIT_CODE:\$?\"'" \
-            --interactive | tee output.log
+            --interactive 2>&1 | tee output.log
           ! grep -q "\[ERROR\]" output.log && awk '{ sub(/\r$/, "") } $0 == "ECS_EXEC_EXIT_CODE:0" { found=1 } END { exit !found }' output.log
