@@ -49,10 +49,10 @@ identification:
             - bbox: [112.00000,-44.00000,155.00000,-10.00000]
               crs: 4326
         temporal:
-            - begin: 2025-09-30 # Set the date once productionized
+            - begin: 2026-02-18 # Set the date once productionized
               end: null
-              resolution: PT30M # temporal resolution of the data, meaning how frequently observations are collected or reported.
-                                # Every 30 minutes
+              resolution: PT60M # temporal resolution of the data, meaning how frequently observations are collected or reported.
+                                # Every 60 minutes
     url: https://thredds.aodn.org.au/thredds/catalog/IMOS/COASTAL-WAVE-BUOYS/WAVE-BUOYS/REALTIME/WAVE-PARAMETERS/catalog.html
     wmo_data_policy: core
 
