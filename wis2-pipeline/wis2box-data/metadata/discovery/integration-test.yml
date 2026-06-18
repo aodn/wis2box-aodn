@@ -55,7 +55,7 @@ identification:
                                 # Every 30 minutes
     url: https://thredds.aodn.org.au/thredds/catalog/IMOS/COASTAL-WAVE-BUOYS/WAVE-BUOYS/REALTIME/WAVE-PARAMETERS/catalog.html
     wmo_data_policy: core
-error：
+error： test
 contact:
     host:
         organization: Integrated Marine Observing System (IMOS)
