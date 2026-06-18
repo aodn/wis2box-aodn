@@ -136,7 +136,7 @@ jobs:
             --task "${{ needs.resolve_ecs_task.outputs.task_arn }}" \
             --container "$ECS_CONTAINER" \
             --command "sh -c 'git clone --branch ${{ github.ref_name }} --single-branch https://github.com/aodn/wis2box-aodn.git /tmp/wis2box-deploy && DEPLOY_BRANCH=${{ github.ref_name }} bash /tmp/wis2box-deploy/wis2-pipeline/wis2box-data/scripts/update_metadata.sh && rm -rf /tmp/wis2box-deploy; echo \"ECS_EXEC_EXIT_CODE:\$?\"'" \
-            --interactive | tee output.log
+            --interactive 2>&1 | tee output.log
           ! grep -q "\[ERROR\]" output.log && awk '{ sub(/\r$/, "") } $0 == "ECS_EXEC_EXIT_CODE:0" { found=1 } END { exit !found }' output.log
 
   publish_discovery_metadata:
