@@ -5,35 +5,22 @@
 1. What is WMO WIS2 system
 2. Why WMO WIS2 system
 3. How WMO WIS2 system works
+4. Introduce Australian WIS2 Node from IMOS
+5. Introduce IMOS WIS2 services 
+6. Introduce how to subscribe to IMOS WIS2 services, by usingMQTT protocol
 
 ### 1.2 Datasets published in WIS2
 
 1. What datasets we published 
 2. What is BUFR format
-3. How to generate BUFR files from source data
+3. what is BUFR template 
+4. How to generate BUFR files from source data
 
 ## 2. Architecture of WIS2 SYSTEM
 ### 2.1 High Level Architecture
-```mermaid
-graph LR
-    Producer[Data Producer] -->|Data| Node[WIS 2.0 Node]
-    Node -->|Metadata & Notifications| Broker[Global Broker]
-    Broker -->|Discovery| Cache[Global Cache]
-    Cache -->|Discovery| Consumers[Data Consumers]
-```
 
 ### 2.2 Publication Flow of WIS2 Stations with WIGOS ID
 
-```mermaid
-flowchart LR
-    A[Facility Team] -->|WIGOS ID| B[OceanOPS]
-    B -->|Activate WIGOS ID| C[Oscar]
-    A -->|WIGOS ID| D[IMOS Data Engineer]
-    D -->|Validate IDs| B
-    D -->|Validate IDs| C
-    D -->|Create/modify the station table| E[WIS2box-AODN Repo]
-    E -->|Push to WIS2box Management Service| F[Publish to IMOS WIS2 Node]
-```
 
 ### 2.3 Publish Discovery Metadata via wis2box-management Service
 
@@ -45,27 +32,6 @@ Source: `IMOS/COASTAL-WAVE-BUOYS/WAVE-BUOYS/REALTIME/WAVE-PARAMETERS/APOLLO-BAY`
 
 BUFR Template: **308015** (Wave buoy template)
 
-```mermaid
-flowchart LR
-    subgraph Source["Source NetCDF (IMOS)"]
-        NC[Wave Buoy NetCDF\nAPOLLO-BAY]
-    end
-    subgraph Transform["Data Conversion Pipeline"]
-        CSV[Intermediate CSV]
-        MAP[csv2bufr Mapping\nwave_buoy_template.json]
-    end
-    subgraph Target["WMO BUFR (Template 308015)"]
-        BUFR[BUFR4 Message]
-    end
-    subgraph Publish["WIS2 Distribution"]
-        WIS[WIS2 Node\nMQTT Notification]
-    end
-
-    NC -->|Extract variables| CSV
-    CSV --> MAP
-    MAP -->|Encode| BUFR
-    BUFR --> WIS
-```
 
 ##### Source NetCDF Variables
 
@@ -111,7 +77,7 @@ Key sections of the MCF file:
 - **identification** — title, abstract, keywords, spatial/temporal extents, WMO data policy
 - **contact** — host organisation details (IMOS)
 
-#### Publishing Workflow
+#### Publishing Workflow manually
 
 ```mermaid
 flowchart TD
@@ -125,4 +91,16 @@ flowchart TD
 ```
 
 ### 2.4 Publish Wave Buoy data to WIS2
+
+## 3. Workshop experiments
+### 3.1 Set up the MQTT connection with the software of MQTT Explorer
+### 3.2 Browse IMOS WIS2 metadata via MQTTExplorer
+### 3.3 Trigger Prefect flow for Wave Buoy data
+### 3.4 Browse Wave Buoy data via MQTTExplorer
+### 3.5 Publish Wave Buoy discovery metadata to WIS2 
+### 3.6 Browse Wave Buoy published datasets via WIS2 webapp and geoapi
+### 3.7 Publish Station metadata to WIS2
+### 3.8 Browse Station metadata via WIS2 webapp and geoapi
+### 3.9 Play around the wis2-notebooks
+
 
