@@ -39,7 +39,7 @@ The integration test discovery collection uses:
 
 - collection stem: `integration-test`
 - metadata identifier: `urn:wmo:md:au-imos:integration-test`
-- topic hierarchy: `au-imos/data/core/ocean/surface-based-observations/integration-test`
+- topic hierarchy: `au-imos/data/core/ocean/experimental/integration-test`
 
 ### Metadata Publishing in Non-Production
 
