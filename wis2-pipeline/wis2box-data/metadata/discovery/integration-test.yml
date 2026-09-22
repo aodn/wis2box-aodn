@@ -1,6 +1,8 @@
 wis2box:
     retention: P30D
-    topic_hierarchy: au-imos/data/core/ocean/surface-based-observations/integration-test
+    # Must resolve to a registered WIS2 topic (codes.wmo.int); 'experimental' is the
+    # only branch accepting free-form sub-topics such as integration-test.
+    topic_hierarchy: au-imos/data/core/ocean/experimental/integration-test
     country: AUS
     centre_id: au-imos
     data_mappings:

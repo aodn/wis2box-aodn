@@ -37,7 +37,7 @@ if [ "${INCLUDE_INTEGRATION_TEST:-false}" = "true" ]; then
     print_status "Publishing integration test station metadata..."
     if ! wis2box metadata station publish-collection \
         -p /data/wis2box/metadata/station/integration_test.csv \
-        -th origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test; then
+        -th origin/a/wis2/au-imos/data/core/ocean/experimental/integration-test; then
         print_error "Failed to publish integration test station metadata"
         exit 1
     fi
@@ -65,7 +65,7 @@ print_success "Wave buoy station metadata published successfully!"
 
 ## Add integration test topic (only needed once):
 #   wis2box metadata station add-topic \
-#     origin/a/wis2/au-imos/data/core/ocean/surface-based-observations/integration-test
+#     origin/a/wis2/au-imos/data/core/ocean/experimental/integration-test
 # 
 ## To add a new topic before publishing (only needed once):
 #   wis2box metadata station add-topic \
